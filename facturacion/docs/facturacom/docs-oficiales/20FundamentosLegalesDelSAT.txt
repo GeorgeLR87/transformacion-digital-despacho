@@ -1,0 +1,723 @@
+Fundamentos legales del SAT
+Fecha de timbrado es menor a la fecha de emisión
+Info
+
+Cuando la fecha de timbrado es menor a la fecha de emisión suele crear inseguridad en los contribuyentes, sin embargo el SAT permite una tolerancia de 5 minutos al futuro para timbrar una factura
+
+Ejemplo:
+
+Fecha de emisión 2020-07-03T13:20:22
+
+Fecha de timbrado 2020-07-03T13:15:22
+
+Es correcta, ya que esta dentro del rango de la tolerancia de 5 min.
+
+Fecha de emisión 2020-07-03T13:20:22
+
+Fecha de timbrado 2020-07-03T13:15:20
+
+Es incorrecto porque esta fuera del rango de la tolerancia.
+
+Fundamento legal.
+
+Preguntas y respuestas sobre
+Comprobación Fiscal
+1. ¿Quiénes están obligados a la factura electrónica?
+Conforme al artículo 29 del Código Fiscal de la Federación, todos los
+contribuyentes están obligados a emitir Factura Electrónica.
+2. ¿La emisión de facturas electrónicas a público en general es posible?
+En lo referente a la emisión de facturas electrónicas para público en general, los
+contribuyentes pueden expedir comprobantes simplificados conforme a la regla
+2.7.1.24 de la RMF vigente.
+3. Somos una empresa que realiza ventas de mostrador a público en
+general ¿qué tipo de comprobante debo emitir?
+Puede expedir una factura electrónica diaria, semanal o mensual donde conste
+los importes totales correspondientes a los comprobantes de operaciones
+realizadas con el público en general del periodo al que corresponda, utilizando
+para ello la clave genérica: XAXX010101000.
+Fundamento legal: Regla 2.7.1.24 de la RMF vigente.
+4. ¿Se debe emitir una factura electrónica global por sucursal cuando se
+tienen ventas al público en general?
+Cuando los contribuyentes expidan comprobantes con operaciones con el
+público en general, pueden expedir una factura electrónica diaria, semanal o
+mensual donde consten los importes totales correspondientes a los
+comprobantes de operaciones realizadas con el público en general del periodo
+al que corresponda, utilizando para ello la clave genérica: XAXX010101000.
+Fundamento legal: Regla 2.7.1.24 de la RMF vigente.
+5. ¿Qué RFC se utiliza en las facturas electrónicas que amparan una o más
+operaciones efectuadas con público en general?
+El RFC genérico XAXX010101000.
+Fundamento legal: Art. 29-A, fracción IV del CFF y la regla 2.7.1.24 de la RMF
+vigente.
+6. ¿Qué RFC se utiliza en las facturas electrónicas que amparan una o más
+operaciones efectuadas con residentes en el extranjero que no se
+encuentren inscritos en el RFC?
+El RFC genérico XEXX010101000.
+Fundamento legal: Art. 29-A, fracción IV del CFF y la regla 2.7.1.26 de la RMF
+vigente.
+7. Deseo generar una Factura Electrónica, realice los trámites
+correspondientes. solicitar la Firma Electrónica y el Certificado de Sello
+Digital, sin embargo, al enviarla al Proveedor de Certificación de
+Factura Electrónica, me indica que el RFC del emisor no se encuentra
+en los archivos de la Lista de Contribuyentes con Obligación (LCO) del
+SAT, por lo tanto, la Factura Electrónica no puede certificarse. ¿Cuánto
+tiempo tarda en actualizarse la LCO?
+La actualización de la LCO puede tardar de 24 a 36 horas a partir de la obtención
+del Certificado de Sello Digital, este proceso es automático y lo realiza el SAT y el
+Proveedor de forma conjunta, por lo que no es necesario realizar trámite alguno.
+8. ¿En dónde se publica la lista de Proveedores de Certificación para
+Facturación Electrónica?
+La lista de Proveedores de Certificación de factura electrónica que operan
+actualmente se encuentra en el portal de internet del SAT en la siguiente ruta:
+http://omawww.sat.gob.mx/tramitesyservicios/Paginas/proveedores_auto
+rizados_certificacion.htm
+9. ¿Qué vigencia tiene el Certificado de Sello Digital para la Factura
+Electrónica?
+Los certificados de sello digital que el SAT ha emitido a partir del 1de enero de
+2012, tienen una vigencia de 4 años. Anteriormente sólo tenían una vigencia de 2
+años.
+Fundamento Legal: Arts. 17-D y 29 del CFF.
+10. ¿Es posible utilizar más de un Certificado de Sello Digital?
+Los contribuyentes pueden obtener un Certificado de Sello Digital para toda su
+facturación o bien uno por cada una de sus sucursales o establecimientos.
+Fundamento Legal: Art. 29, fracción 11 del CFF.
+11. ¿Cómo se almacenan las facturas electrónicas?
+Las personas que entreguen, envíen o reciban una factura electrónica en su
+formato electrónico CXMU. deberán almacenar los mismos, en medios
+magnéticos, ópticos o cualquier otro medio de almacenamiento informático (CD.
+DVD, DAT, Disco Duro, etc.), siempre que la tecnología del medio de
+almacenamiento esté actualizada.
+Fundamento legal: Reglas 2.7.1.1. y 2.8.1.5. de la RMF vigente.
+12. ¿Es obligatorio que el emisor de facturas electrónicas ponga a
+disposición de sus clientes el archivo XML o es suficiente con entregar
+únicamente la representación impresa?
+Los emisores de facturas electrónicas están obligados a poner a disposición de
+sus clientes receptores el archivo XML. Sólo si el receptor lo solicita. deberán
+entregar la representación impresa adicionalmente.
+13. ¿Cuál es el documento que puedo utilizar para deducir o acreditar
+fiscalmente, conforme al esquema de facturación electrónica?
+Los contribuyentes podrán realizar las deducciones o acreditamiento
+correspondientes. utilizando el archivo digital que contenga la factura
+electrónica CXML), la representación impresa. únicamente presume la existencia
+de dicho comprobante fiscal.
+Fundamento legal: Artículo 29, fracción V del CFF. regla 2.7.1.7. de la RMF
+vigente.
+14. ¿Hay un límite para el número de folios a solicitar en la factura
+electrónica?
+En la Factura Electrónica, si bien no hay un límite en el número de folios que
+pueden solicitarse, éstos serán asignados por el SAT a través del Proveedor de
+Certificación de factura electrónica al momento de la certificación de la factura
+electrónica. no siendo necesario manejar rangos de folios.
+Fundamento legal: Art. 29 del CFF.
+15. ¿Cómo se cancela un folio en el esquema de facturación electrónica?
+¿cómo se avisa al SAT?
+Los contribuyentes emisores de facturas electrónicas, para efectuar la
+cancelación de las mismas, deberán hacerlo con su Certificado de Sello Digital,
+en la página de internet del SAT, si eres persona física no necesitas sello digital,
+puedes cancelarla utilizando tu Firma Electrónica.
+En el caso de las facturas generadas por la aplicación de "Mis cuentas” la
+cancelación se puede realizar por ese mismo medio con la Contraseña.
+Fundamento legal: Reglas 2.2.1. y 2.7.2.9. de la RMF vigente.
+16. ¿Estoy obligado a guardar en una base de datos especial la facturación
+electrónica que emita y la que reciba?
+De conformidad con la regla 2.7.1.1 de la Resolución Miscelánea Fiscal vigente. se
+establece que los contribuyentes que emitan y reciban facturas electrónicas.
+deberán almacenarlas en medios magnéticos, ópticos o de cualquier otra
+tecnología, en su formato electrónico XML.
+17. ¿Es importante que la fecha de emisión corresponda al mes de
+facturación, o se puede poner cualquier fecha (mes anterior)?
+Es importante cuidar que al momento de que se emita una factura electrónica
+ésta cuente con la fecha del momento en que se está emitiendo, la factura
+electrónica deberá remitirse al Servicio de Administración Tributaria o al
+proveedor de certificación de facturas electrónicas, a más tardar dentro de las
+veinticuatro horas siguientes a que haya tenido lugar la operación, acto o
+actividad de la que derivó la obligación de expedirla.
+Fundamento legal: Artículo 39 del Reglamento del Código Fiscal de la
+Federación.
+18. ¿EI Proveedor de certificación de factura electrónica tiene la obligación
+de emitir sin costo la factura electrónica?
+Es requisito de los Proveedores de certificación de facturas electrónicas. El
+prestar un servicio básico y gratuito para la generación y certificación de las
+facturas electrónicas.
+19. En operaciones de enajenación de inmuebles ante fedatario público,
+¿se requerirá facturación electrónica?
+Para este caso. los adquirentes de dichos bienes podrán comprobar el costo de
+adquisición para efectos de deducción y acreditamiento, con la factura
+electrónica que dichos notarios expidan por los ingresos que perciban. siempre y
+cuando estos incorporen a dichas facturas el complemento que al efecto
+publique el SAT.
+Fundamento legal: Regla 2.7.1.23. de la RMF vigente.
+20. En el layout del XML no se contempla un espacio o nodo para
+impuestos sobre alojamiento o servicios de hospedaje ¿en dónde se
+incluyen este tipo de impuestos?
+Existe un complemento denominado "Otros derechos e impuestos" para incluir
+en la factura electrónica, los impuestos locales. Los complementos el SAT los
+publica en su página en internet.
+21. ¿EI sello digital cambia por cada operación que realice?
+El sello digital es generado a partir del certificado de sello digital y de la cadena
+original de cada factura, por lo que dicho sello será diferente para cada
+transacción.
+22. Para emitir las facturas electrónicas, ¿Cuál paquete contable es el que
+se sugiere?
+El SAT no emite sugerencias sobre este tema. cada contribuyente es libre de
+adquirir o utilizar el software que desee.
+23. ¿Qué información va en la addenda?
+En la addenda va cualquier información que el emisor desee incluir. la cual es una
+sección no fiscal de la factura electrónica.
+24. Los datos del pedimento y el agente aduanal en ventas de primera
+mano de artículos importados, ¿en dónde se reflejan, en la addenda o
+en la factura electrónica?
+Los datos de información aduanera van en el cuerpo de la factura electrónica de
+conformidad con lo señalado en el Anexo 20 de la Resolución Miscelánea Fiscal;
+la addenda es para contenidos no fiscales. No es requisito de las facturas
+electrónicas incluir información del agente aduanal.
+25. ¿Forzosamente tengo que invertir en un sistema que emita factura
+electrónica y posteriormente pagar a un certificador para que mis
+facturas tengan validez?, ¿hay algún fabricante de sistemas contables
+que haya pasado la aprobación del SAT?, ¿Cómo contador como
+compruebo que cumpla con los requerimientos técnicos informativos
+del SAT?
+Los contribuyentes pueden emitir sus facturas electrónicas usando un sistema
+que ellos mismos desarrollen. compren, arrienden, usen en comodato, etc., o en
+su defecto utilizar el servicio gratuito que ofrece el SAT o bien las aplicaciones
+gratuitas que el SAT pone al alcance de los contribuyentes a través de los
+proveedores autorizados. Si el contribuyente usa la aplicación gratuita ya
+mencionada, la certificación de la factura será sin costo. Los proveedores que son
+autorizados por el SAT, son publicados en la página electrónica en Internet de
+dicho organismo desconcentrado. El SAT no certifica a fabricantes de sistemas
+contables.
+26. ¿En qué proveedor puedo confiar en materia de factura electrónica que
+cumpla con los requisitos?
+El SA T no recomienda un proveedor en particular. Los datos de los proveedores
+de certificación de facturas electrónicas autorizados por el SAT se encuentran
+publicados en la misma página del SAT en Internet, todos los proveedores
+cumplen con los requisitos establecidos en las disposiciones fiscales.
+27. ¿AI proveedor de certificación de factura electrónica se le tiene que dar
+el certificado de sello digital del contribuyente para validación de las
+facturas electrónicas; no es esto un riesgo muy grande para el
+contribuyente?
+Para validar las facturas electrónicas solo se requiere el Certificado de Sello Digital
+usado por el Proveedor. El Certificado del Contribuyente ya está incluido en la
+factura electrónica.
+28. EI problema de conectividad es importante, si se interrumpe el servicio
+de conexión a Internet, ¿qué se debe hacer?
+Se debe generar la factura y una vez restablecido el servicio de conexión a
+Internet, se podrá enviar al Proveedor para su certificación. Pueden pasar hasta
+72 horas entre la generación del comprobante y la certificación.
+Fundamento legal: Regla 2.7.2.9. de la RMF vigente.
+29. ¿Por qué se necesita validar facturas electrónicas de las adquisiciones,
+si ya traen sello digital?
+De conformidad con lo señalado en el penúltimo párrafo del artículo 29 del
+Código Fiscal de la Federación. los contribuyentes que deduzcan o acrediten
+fiscalmente con base en las facturas electrónicas podrán consultar en la página
+de Internet del SAT que el número de folio que ampara la factura electrónica y si
+al momento de la emisión el certificado del sello digital se encontraba vigente y
+registrado en dicho órgano desconcentrado.
+30. Con respecto a los pagos en parcialidades ¿se requerirá una Factura
+Electrónica para el acreditamiento del IVA?
+Tratándose de pago en parcialidades , los contribuyentes deberán emitir una
+factura electrónica por el valor total de la operación en el momento en que ésta
+se realice y se expedirá una factura electrónica por cada uno de los pagos que se
+reciban posteriormente, los cuales deberán señalar el folio de la factura
+electrónica emitida por el total de la operación, señalando además, el valor total
+de la operación, y el monto de los impuestos retenidos, así como de los impuestos
+trasladados, desglosando cada una de las tasas del impuesto correspondiente.
+Fundamento Legal: Artículo 2 9-A. fracción VII inciso b) del CFF.
+31. ¿Los folios que asigna el SAT para factura electrónica se podrán utilizar
+para cualquier tipo de documento que emitamos tales como factura,
+nota de crédito, etc.?
+Es correcto, los folios se asignan para emitir facturas electrónicas, y no
+dependiendo del efecto que tendrá en la contabilidad, el cual puede ser de
+Ingreso (cuando se cobra), Egreso (Si se trata de una nota de crédito o recibo de
+nómina) o Traslado (carta de porte).
+32. ¿Después de haber generado el certificado digital, en qué tiempo
+puede utilizarlo para que el proveedor de certificación de factura
+electrónica certifique mis comprobantes?
+Para que se vea reflejado un Certificado de Sello Digital en el servicio donde valida
+el proveedor de certificación de factura electrónica, pueden pasar de 24 a 3 6
+horas. contadas a partir de la obtención del Certificado de Sello Digital.
+33. ¿Se pueden emitir facturas electrónicas en dólares?
+Si, en el caso de facturas electrónicas existen 2 campos, uno para el tipo de
+cambio y otro para la moneda.
+34. ¿Si ya tenía comprobantes fiscales emitidos, con número de folio
+consecutivo, al haber iniciado con facturación electrónica, está tenía
+que iniciar desde cero?
+Al emitir factura electrónica, el Proveedor de Certificación de factura electrónica
+o el SAT, asignará a cada factura el número de folio que el sistema del SAT emita;
+dicho folio que emitirá el sistema del SAT no dará continuidad a la numeración
+consecutiva que se haya llevado hasta el momento del cambio de esquema.
+35. ¿Qué se debe hacer para ser proveedor de certificación de factura
+electrónica?
+Deberán cumplir con los requisitos señalados en las fichas de trámite 110/CFF, y
+111/CFF del anexo 1-A de la RMF para 2016, y 112/CFF del Anexo 1-A de la 2RMRMF
+para 2016, publicado en el DOF el 06 de mayo de 2016, mismos que también
+pueden consultarse en la página del SAT en Internet.
+36. ¿Qué ocurre con las facturas canceladas?
+Se deben conservar como parte de la contabilidad.
+37. ¿Cuáles son los costos de la certificación de los folios y en qué tiempo
+se certifican? ¿Y se expide al proveedor factura por el costo?
+Los costos dependerán de los proveedores de certificación de factura electrónica
+y están sujetos a la libre oferta y demanda. el SAT no interviene en dicho tema. La
+certificación debe ser un proceso en línea. El proveedor de certificación de factura
+electrónica como cualquier otro contribuyente estará obligado a expedir
+comprobantes por sus ingresos.
+38. ¿Cómo válido una factura electrónica si la envían como archivo en
+formato XML?
+La validación de la factura electrónica se realiza en la página del SAT en Internet,
+sección "Factura Electrónica". Existen dos servicios de validación, uno en el que
+podrá realizarse la consulta ingresando uno por uno los datos de cada factura a
+validar, y otro servicio mediante una herramienta de validación masiva de
+facturas electrónicas. en la cual se ingresarán archivos que contengan los datos
+de las facturas a validar.
+39. ¿Existen notas de crédito o cargo electrónico?
+Si, en factura electrónica se tienen contempladas de tipo "Egreso".
+40. Si me dedico al transporte de mercancías y requiero emitir Facturas
+Electrónicas, ¿puedo incluir en estas. información relacionada con el
+traslado de los bienes que solicitan otras dependencias o entidades.
+incluso el contrato de transportación?
+Para efectos de la emisión de la Factura Electrónica, en caso de ser necesario
+incluir información que no sea de carácter fiscal, como por ejemplo datos
+comerciales de la transacción, o bien datos requeridos por alguna regulación
+distinta a la fiscal, éstos podrán ser incorporados dentro de la factura electrónica,
+mediante el uso de la facilidad de ensobretado denominada "addenda", que se
+señala en el anexo 20 de la Resolución Miscelánea Fiscal.
+41. Conforme al artículo 16 B de la Ley Aduanera, los particulares
+autorizados por el SAT que cobran a los contribuyentes un
+aprovechamiento por el servicio de procesamiento electrónico de
+datos para llevar a cabo el control de la importación temporal de
+remolques, semirremolques y portacontenedores ¿cómo deben
+integrar dicho aprovechamiento a la factura electrónica que se emita?
+Al ser un aprovechamiento, no podría facturarse como un concepto más dentro
+del comprobante, por lo que al no existir un complemento específico para tal
+efecto se debe utilizar el complemento "Otros derechos e impuestos", colocando
+en el atributo "tasa" el valor de "0.00".
+42. Para el caso de pago del Impuesto Especial sobre Producción y
+Servicios (IEPS), cuando este se calcula mediante la aplicación de
+cuotas y no por tasa, ¿en qué parte de la factura electrónica se deben
+asentar los montos de este impuesto?, esto debido a que sólo existen
+campos que manejan tasas y no cuotas.
+En el caso de montos por concepto de Impuesto Especial sobre Producción y
+Servicios resultantes de la aplicación de cuotas, estos deberán asentarse en la
+factura electrónica, en el apartado correspondiente, identificándolos como a la
+tasa del 0%.
+43. ¿Cómo deberá incorporarse la retención de 5 al millar en una Factura
+Electrónica de Obra Pública?
+La información correspondiente a retención de 5 al millar, deberá incorporarse
+en el Complemento Otros Derechos e Impuestos de la siguiente forma: en el
+atributo lmpLocRetenido especificar el concepto de la retención, en el atributo
+TasadeRetencion se deberá especificar la tasa de retención de conformidad con
+el Art. 191 de la Ley Federal de Derechos, en el atributo Importe especificar el
+monto retenido.
+44. ¿Las personas morales deben proporcionar constancia de retenciones
+del ISR e IVA cuando pagan renta de bienes inmuebles o servicios
+profesionales a personas físicas que emitieron facturas electrónicas?
+No; pueden dejar de proporcionar esa constancia cuando la persona física expida
+una Factura Electrónica con el monto de los impuestos retenidos. Dicha factura
+se considera una constancia de retención.
+Fundamento legal: Artículo 1.13 del Decreto que compila diversos beneficios
+fiscales y establece medidas de simplificación administrativa publicado en el
+Diario Oficial de la Federación el 26 de diciembre del 2013.
+45. En una factura electrónica observamos que, habiendo sido emitida y
+enviada al Auxiliar de Comprobación Fiscal para su timbrado, conforme
+al dato de hora, minuto y segundo de su emisión y del timbrado,
+aparentemente esta fue timbrada antes de haber sido generada o
+emitida, ¿es esto posible?
+Si. esto es posible; pueden darse diferencias en los relojes de los sistemas que
+originen estas situaciones; no existe problema en estos casos, siempre y cuando
+la diferencia de tiempo entre su emisión y el sellado del Auxiliar de Factura
+Electrónica (PAC) no sea mayor a 5 minutos.
+Para el caso de las facturas electrónicas emitidas en el Estado de Quintana Roo,
+derivado del cambio de zona horaria en el cual se adelantó una hora en el reloj a
+partir del 1de febrero de 2015 en dicha entidad. la diferencia entre su emisión y el
+sellado del Auxiliar de Factura Electrónica (PAC) puede variar en 65 minutos.
+46. Recibimos facturas electrónicas y observamos que, en algunas de ellas,
+la fecha de su emisión es posterior conforme al dato de hora, minuto y
+segundo a la fecha de su timbrado: aparentemente estas fueron
+timbradas antes de haber sido generadas o emitidas, ¿es esto posible,
+son válidas?
+Si, esto es posible; pueden darse diferencias en los relojes de los sistemas que
+originen estas situaciones; no existe problema en estos casos. siempre y cuando
+la diferencia de tiempo entre su emisión y el sellado del Auxiliar de Factura
+Electrónica (PAC) no sea mayor a 5 minutos.
+Para el caso de las facturas electrónicas emitidas en el Estado de Quintana Roo.
+derivado del cambio de zona horaria en el cual se adelantó una hora en el reloj a
+partir del 1de febrero de 2O15 en dicha entidad, la diferencia entre su emisión y el
+sellado del Auxiliar de Factura Electrónica (PAC) puede variar en 65 minutos.
+47. ¿Es correcto que el Proveedor de Certificación de factura electrónica
+rechace una Factura Electrónica, cuando en el atributo "Folio" del
+Anexo 20, se ingresan caracteres alfabéticos ó alfanuméricos?
+No, el Proveedor no deber a rechazar la Factura Electrónica cuando el
+contribuyente en el atributo "Folio" del Anexo 20 ingrese caracteres alfabéticos o
+alfanuméricos, debido a que este campo es opcional y de control interno del
+contribuyente.
+48. AI emitir una Factura Electrónica en donde se trasladen y/o retengan
+impuestos, ¿cómo se deben reflejar en el comprobante?
+Se debe incluir tanto el detalle de los traslados o retenciones como el total
+correspondiente. Si no se trasladan o retienen impuestos, no se debe declarar el
+detalle ni el total de impuestos.
+Ejemplo con traslados:
+- <cfdi :Impuestos tota1ImpuestosTrasladados ="22.07">
+- <cfdi :Traslados >
+<cfdi:Traslado tasa="0.00" importe="0.00" impuesto ="IVA" />
+<cfdi:Traslado tasa="16.00" importe="22.07" impuesto ="IVA" />
+</cfdi:Traslados>
+</cfdi:Impuestos>
+Ejemplo con Retenciones:
+- <cfdi :Impuestos totalimpuestosRetenidos ="547.38">
+- <cfdi:Retenciones>
+<cfdi :Retencion importe="547.38" impuesto ="lSR" />
+</cfoli:Retenciones>
+</cfdi:Impuestos>
+49. ¿Cómo se deberá llenar el Complemento de la Factura Electrónica, para
+el manejo de datos de Aerolíneas para pasajeros?
+La Factura Electrónica de líneas aéreas, se debera llenar considerando la
+cantidad total, incluso la tarifa de uso aeroportuario CTUA) y los cargos
+adicionales que existieran en su caso. Ahora bien, al incluir el Complemento de
+Aerolíneas, deberá considerarse para su conformación lo siguiente:
+1. Para el atributo TUA se deberá indicar el importe del TUA aplicable al
+boleto.
+2. Para el atributo Total Cargos, se deberá manifestar el total de cargos
+adicionales al TUA que se apliquen en su caso.
+Se reitera, las líneas aéreas deberán generar la Factura Electrónica, integrando la
+cantidad total y en el Complemento de Aerolíneas, se deberá especificar lo
+señalado en los puntos 1 y 2.
+50. ¿Es correcto registrar en una factura electrónica cantidades en
+negativo?
+No es correcto registrar cantidades en negativo en las facturas electrónicas.
+51. ¿Los gastos amparados con facturas electrónicas son deducibles?
+Si, con las facturas electrónicas se pueden deducir los gastos efectuados,
+pudiendo consultar su autenticidad en la página de internet del SAT, si el número
+de folio que ampara la factura electrónica fue autorizado al emisor y si el
+certificado que ampare el sello digital se encontraba vigente y registrado al
+momento de la emisión.
+https://verificacfdi.facturaelectronica.sat.gob.mx/
+Fundamento legal: Art. 29, penúltimo párrafo del CFF.
+52. ¿En los casos de las (A.C.) receptoras de donativos deberán usar el
+esquema de facturación electrónica?
+Las disposiciones legales del Código Fiscal de la Federación y las administrativas
+de las RMF para 2015, no hacen distinción entre los contribuyentes en general y
+los que tengan la forma de un Asociación Civil o sean donatarias autorizadas por
+el SAT, por ende, les aplican las mismas obligaciones y facilidades en materia de
+comprobación fiscal.
+53. ¿Qué opción tengo para emitir facturas electrónicas?
+Tienes las siguientes opciones:
+ Aplicación Mis cuentas
+Solo para personas físicas, requieres tu contraseña.
+ Aplicación gratuita del SAT o la aplicación gratuita de algún proveedor.
+Puede ser utilizada por personas físicas y personas morales.
+Permite el uso de la e.firma (Solo personas físicas en la aplicación gratuita
+del SAT) o certificado de sello digital.
+ Proveedores de facturas electrónicas.
+Puede contratarse por personas físicas y personas morales
+Necesitas tu certificado de sello digital.
+54. Generé una factura desde “Mis cuentas” (Factura Fácil) ¿cómo puedo
+enviar por correo el archivo electrónico y el PDF a mis clientes?
+Desde el portal privado de Factura electrónica, previa autenticación, puede
+recuperar el archivo XML y PDF de los comprobantes que se emitan a través de
+Factura Fácil (Mis cuentas.) Una vez descargados, podrá enviarlos por correo, sin
+necesidad de imprimirlos.
+55. ¿Es correcto que algunos establecimientos obliguen a sus clientes a
+generar la factura electrónica a través de una página electrónica?
+No es correcto; la generación de la factura electrónica debera realizarse en el
+propio establecimiento si el cliente así lo solicita, para lo cual se deberán solicitar
+los datos para la generación de la factura en el mismo lugar y momento en que
+se lleve a cabo la operación. Una vez generada la factura, debe ponerla a
+disposición del cliente.
+56. ¿Es válido utilizar un portal para que el cliente obtenga o descargue
+directamente su factura por medio de una página electrónica?
+Seria valido si el cliente así lo desea. Es definición del cliente solicitar en el
+momento su factura o bien aceptar la obtención o descarga de su factura por
+medio de un portal.
+No sería válido si el establecimiento solo ofrece la vía del portal sin la posibilidad
+de obtener la factura en el establecimiento. Debe generar las facturas en el
+propio establecimiento a clientes que así lo requieran.
+Fundamento Legal: Articulo 29 del CFF.
+57. ¿Cuál es el medio por el cual se debería entregar la factura electrónica?
+La forma en la que se entregue la factura, se debera acordar entre el cliente y el
+establecimiento. Seria valido:
+1. Copiar el archivo electrónico en un dispositivo de almacenamiento
+proporcionado por el cliente (memoria USB, por ejemplo)
+2. Enviarla por correo electrónico al buzón que indique el cliente, o
+3. Ponerla a disposición en un portal mediante ruta y mecánica de acceso
+definidas por el establecimiento.
+Adicionalmente el cliente puede solicitar la representación impresa de la factura.
+El SAT ofrece el servicio de recuperación de facturas electrónicas desde su portal
+tanto para el emisor como para el receptor (requiere e.firma o contraseña para
+su acceso.)
+Fundamento Legal: Articulo 29 del CFF y regla 2.7.1.36 de la RMF vigente
+58. Cuando los patrones realicen pagos por concepto de cuotas obrero
+patronales al IMSS y el CFDI expedido por dicho instituto no contenga
+en el desglose de los montos correspondientes, por una parte, a la
+cuota obrera, y por la otra a la patronal ¿qué cantidad del comprobante
+fiscal podrá deducir el patrón?
+Los patrones, solo podrán deducir las cuotas patronales pagadas al instituto
+Mexicano del Seguro Social, mismas cuyo detalle consta en sus registros
+contables y que paguen por cada uno de sus trabajadores.
+Las cuentas pagadas por los trabajadores no pueden ser deducibles por los
+patrones.
+Fundamento Legal: Articulo 25, fracción VI de la Ley del Impuesto Sobre la Renta
+59. ¿Cuál será la sanción si un contribuyente emite o utiliza facturas
+electrónicas que no reúnan los requisitos fiscales?
+Se sancionará con las mismas penas aplicables al delito de defraudación esto es
+prisión a quien les de efectos fiscales, dependiendo del monto de lo defraudado.
+El delito de defraudación fiscal se sancionará con las siguientes penas:
+ Con prisión de tres meses a dos años, cuando el monto de lo defraudado
+no exceda de $1,221,950.00
+ Con prisión de dos años a cinco años cuando el monto de lo defraudado
+exceda de $1,221,950.00 pero no de $1,832,920.00.
+ Con prisión de tres años a nueve años cuando el monto de los defraudado
+fuera mayor de $1,832,920.00
+Cuando no se pueda determinar la cuantía de lo que se defraudo, la pena será de
+tres meses a seis años de prisión.
+Si el monto de lo defraudado es restituido de manera inmediata en una sola
+exhibición, la pena aplicable podrá atenuarse hasta en un cincuenta por ciento.
+Fundamento Legal: Arts. 108, fracciones I, II y III y 109, fracción VIII del CFF.
+60. Las asociaciones de intérpretes y de actores, los sindicatos de
+trabajadores de la música y las sociedades de gestión colectiva
+constituidas de acuerdo con la Ley Federal del Derecho de Autor, en
+los casos en los cuales distribuyen ingresos a sus miembros o
+asociados: intérpretes, actores, trabajadores de la música y
+agremiados, ¿qué tipo de CFDI deben obtener o entregar?
+Estas personas morales deben gestionar ante un PSECFDI la generación de un
+CFDI de ingreso -en dónde el emisor es la persona física que recibe el ingreso
+distribuido y el receptor la asociación, sindicato o sociedad que distribuye el
+citado ingreso- con este CFDI se ampara la distribución de los ingresos a las
+personas físicas por cuya cuenta y orden realizan los cobros, de tal manera que
+los ingresos cobrados no sean atribuibles a la persona moral; adicionalmente se
+deberá generar una representación impresa del mencionado CFDI en la cual se
+deberá recabar la firma autógrafa de la persona física receptora del ingreso, como
+constancia del consentimiento de ésta para la emisión de CFDI a su nombre.
+Fundamento Legal: Artículo 29 y 29-A del Código Fiscal de la Federación, regla
+2.7.6.1 de la RMF vigente.
+61. En el caso de la venta de un vehículo automotor nuevo, cuando se
+recibe como pago del mismo dos o más vehículos automotores usados
+y en su caso dinero. ¿Es posible aplicar la facilidad contenida en la
+fracción 1 de la regla 2.7.1.11. de la RMF?, de ser posible aplicarla ¿cómo
+se operaría?
+Sí, es posible aplicar la citada facilidad cuando se reciben dos o más vehículos
+como parte del pago del vehículo nuevo y para tal efecto, en el CFDI se deberá
+incorporar un complemento por cada vehículo que se reciba como pago.
+Fundamento Legal: Regla 2.7.1.11. de la RMF vigente.
+62. En caso de la venta de un bien nuevo o usado, cuando el precio del
+mismo es pagado en dos o más exhibiciones, ¿Cómo y cuándo debe
+expedirse la factura o facturas?
+En el caso de pagos en parcialidades, para efectos de la emisión del CFDI, el
+artículo 29-An fracción VII, inciso b) del CFF, establece que cuando la
+contraprestación no se pague en una sola exhibición se emitirá un CFDI por el
+valor total de la operación en el momento en que esta se realice, y se expedirá un
+CFDI por cada uno de los pagos que se reciban posteriormente, los cuales
+deberán señalar el folio del CFDI emitido por el total de la operación, señalando
+además, el valor total de la operación, y el monto de los impuestos retenidos, así
+como de los impuestos trasladados.
+Fundamento Legal: Artículo 29-A, fracción VIII, inciso b) del CFF.
+63. ¿Cuál es la forma en que se deben manejar los recibos de caja y si estos
+deben ser CFDI o pueden manejarse de manera interna?
+Los recibos de caja son documentos que forman parte del control interno del
+contribuyente, que únicamente amparan las cantidades recibidas por concepto
+no identificados con operaciones susceptibles del pago de contribuciones,
+realizadas por el contribuyente.
+Es importante mencionar, que cuando se reciban recursos monetarios
+relacionados con operaciones susceptibles del pago de contribuciones, se debe
+expedir el CFDI correspondiente, incluso se debe expedir el CFDI cuando se
+reciba un pago en parcialidades.
+Fundamento legal: No aplica.
+64. En relación con los Decretos sobre la renovación del parque vehicular
+del autotransporte y por él se otorga medidas para la sustitución de
+vehículos de autotransporte de pasaje y carga, concretamente para
+efectos de expedir el CFDI con complemento, en la enajenación de un
+vehículo nuevo o seminuevo al permisionario y cuando no se cuente
+aun con el número de placas, en el atributo “NumPlacas”, ¿Qué
+información se debera registrar?
+Se deberán ingresar los siguientes caracteres: “XXXXXXXX”
+Fundamento Legal: No aplica.
+65. ¿Cómo se debe verificar el cálculo del IVA, cuando se utiliza el
+complemento “Estado de cuenta de combustible de monederos
+electrónicos”?
+Para verificar el cálculo del IVA asociado al uso de monederos electrónicos de
+combustible, deberás tomar en cuenta que esta tasa se debe calcular sobre cada
+operación realizada en el periodo a reportar y no sobre el monto total a facturar,
+es decir, se debe tener presente que en operaciones con monederos electrónicos
+de combustible cada operación realizada con estos, es independiente y la suma
+de esas operaciones genera un gran total, mismo que debe considerarse para la
+determinación del cálculo de dicho impuesto
+Por lo anterior, para verificar el cálculo se debera realizar lo siguiente:
+Es importante mencionar que, en el importe de la factura, se debe considerar la
+cuota vigente del IEPS.
+Nota: en algunos casos el cálculo de las operaciones individuales, puede reflejar
+una mínima variación de centavos por el redondeo de las cantidades.
+66. ¿Qué hacer en caso que la aplicación del Validador de CFDI no se
+muestre de forma correcta?
+Cuando en la aplicación del validador de forma y sintaxis del CFDI se muestra la
+siguiente imagen, deberás seguir los siguientes pasos para que se habilite de
+forma correcta.
+Paso 1. Ir al panel de control de tu equipo de cómputo.
+Paso 2. Ingresar al apartado Programas, ahí podrás encontrar el panel de control.
+Paso 3. Da clic en el icono de Java.
+Paso 4. Da clic en la pestaña Seguridad y en la opción lista de excepciones de
+sitios, da clic en la opción editar lista de sitios.
+Paso 5. Da clic en Agregar y a continuar coloca la dirección electrónica asociada
+al validador de forma y sintaxis de CFDI.
+Paso 6. A continuación, da clic en Aplicar y posteriormente en Aceptar, los
+cambios realizados te permitirán acceder al validador.
+Con lo anterior. obtendrás la siguiente pantalla, que te permitirá acceder al
+Validador de forma y sintaxis de CFDI:
+67. Para efectos de la elaboración de comprobantes fiscales digitales por
+internet (CFDI), cuando se tiene identificada la forma en qué se realizó
+el pago de conformidad con lo señalado en la regla 2.7.1.32., ¿Qué
+catálogo de formas de pago se debe utilizar? ¿El "Catalogo de métodos
+de pago" contenido en el Anexo 24 Contabilidad en medios
+electrónicos o el "Catalogo de formas de pago" publicado en el Portal
+del SAT el 03 de junio de 2016?
+En el caso de expedición de los CFDI.se deberá utilizar el "Catálogo de formas de
+pago" publicado en el Portal del SAT el 03 de junio de 2016, el uso del citado
+catalogo será exigible a partir del 15 de julio del 2016.
+El "Catalogo de métodos de pago" contenido en el Anexo 24 Contabilidad en
+medios electrónicos, sólo se utiliza para efectos del registro de la contabilidad
+electrónica.
+Fundamento Legal: Artículo 29-A, fracción VII, inciso c) del Código Fiscal de la
+Federación en relación con los dispuesto en la regla 2.7.1.32. publicada en la
+Segunda Resolución de Modificaciones a la Resolución Miscelánea Fiscal para
+2016, publicada en el Diario Oficial de la Federación del 6 de mayo de 2016.
+68. Si mi cliente me solicita ingresar en una factura un método de pago,
+por ejemplo, Tarjeta de Crédito, aun y cuando esta no me ha sido
+pagada, ¿Estoy obligado a ello?
+No, es una práctica incorrecta aquella en la cual el cliente (receptor) pretenda
+obligar al emisor de la factura a señalar como forma en que se realizó el pago de
+la misma –método de pago- un dato que no se corresponde con la realidad, como
+señala “Tarjeta de Crédito” cuando en realidad no se ha realizado el pago.
+69. ¿Es una obligación emitir CFDI de tipo egreso cuando se realicen
+devoluciones, descuentos y bonificaciones?
+Si, de conformidad con el penúltimo párrafo del artículo 29 del Código Fiscal de
+la Federación, en relación con el artículo 25 de la Ley del Impuesto Sobre la Renta.
+70. ¿Las notas de crédito que emito en un CFDI de egreso también debo
+entregarlas o ponerlas a disposición de mis clientes como los demás
+CFDI?
+Si, al respecto el penúltimo párrafo del artículo 29 del Código Fiscal de la
+Federación, establece que cuando existan devoluciones, descuentos y
+bonificaciones se debera emitir un comprobante fiscal digital por internet, el cual
+es un CFDI de egreso que como señala la fracción V del artículo 29 del mismo
+CFF, una vez que es certificado “timbrado” por el SAT o un proveedor de servicios
+de certificación de CFDI (PAC), debe ser entregado o puesto a disposición de sus
+clientes.
+71. ¿Son válidas las facturas electrónicas emitidas a partir del 1 de febrero
+de 2017 con la referencia de Distrito Federal?
+Si son válidas para efectos fiscales; las referencias al Distrito Federal en las
+facturas electrónicas, se entenderán hechas a la Ciudad de México y tal situación
+no se considerar infracción a las disposiciones fiscales.
+Fundamento Legal: Articulo 29-A, fracciones I y III del Código Fiscal de la
+Federación y regla 1.10 de la Resolución Miscelánea Fiscal vigente
+72. El sistema de cómputo con el que genero mis CFDI, registra importes
+con más de dos decimales por cada partida de la factura y con dos
+decimales en la parte de totales. ¿Es válido generar comprobantes con
+diferente número de decimales en las partidas y en los totales?
+Sí es correcto; por cada concepto de la factura se puede utilizar de cero hasta 6
+decimales como máximo y en los totales se debe redondear al final del cálculo el
+resultado al número de decimales que soporta la moneda.
+Ejemplo:
+Se emite una factura con moneda mexicana (MXN) con las siguientes partidas
+donde base y tasa o cuota tienen 4 decimales.
+Conceptos
+Base
+Tasa o cuota Monto del
+impuesto
+Servicio 1 1.1100 0.1600 0.1776
+Servicio 2 1.1100 0.1600 0.1776
+Servicio 3 1.1100 0.1600 0.1776
+Servicio 4 1.1100 0.1600 0.1776
+Totales 4.4400 0.7104
+El monto del impuesto se calcula también con 4 decimales; al obtener el total del
+impuesto sumando las 4 partidas se obtiene 0.7104; al redondear al final del
+cálculo el resultado al número de decimales que soporta la moneda, en este caso
+son dos decimales, se llega a 0.71.
+De esta manera los comprobantes son validados y timbrados sin problema por el
+PAC.
+Fundamento Legal: Anexo 20 versión 3.3 vigente.
+73. El sistema de cómputo con el que genero mis CFDI, “completa” a los
+seis decimales permitidos campos como: Cantidad, Valor Unitario,
+Importe (monto del impuesto), Descuento, Base; ¿es necesario rellenar
+de ceros a la derecha en la parte fraccionaria, para completar los 6
+decimales? ¿es válido omitir los ceros no significativos?
+La validación del PAC para cada uno de los campos a reportar en el CFDI debe de
+cumplir con que el número de decimales reportados sea menor o igual al
+número de decimales especificados en el “Estándar de anexo 20 y sus
+complementos”. Esto permite rellenar de ceros a la derecha en la parte
+fraccionaria para completar los 6 decimales y también permite el omitir los ceros
+no significativos; ambos criterios son aceptados.
+Ejemplo:
+Valor en el Sistema
+de la empresa Valor valido en el CFDI
+$ 0.19 $ 0.19 $ 0.190000
+$ 1.4567 $ 1.4567 $ 1.456700
+$ 3.4567288 $ 3.456729 $ 3.456729
+Es importante ser consistentes al realizar las operaciones aritméticas con el
+mismo número de decimales que hayan definido para los campos del tipo
+importe.
+Fundamento Legal: Anexo 20 versión 3.3 vigente.
+74. ¿En general cuales son las recomendaciones que sugiere el SAT, para
+evitar un rechazo en la factura con respecto al tema de decimales?
+Para evitar un rechazo de la factura se sugiere:
+ Para los cálculos considerar el máximo número de decimales que permita
+el sistema que utilizan las empresas para generar su factura (hasta 6
+decimales como máximo).
+ Los campos que permiten hasta 6 decimales son los del tipo t_Importe,
+por ejemplo: Cantidad, Valor Unitario, Importe (resultado de
+multiplicar cantidad por Valor Unitario), Descuento, Base,
+Importe a nivel de impuestos.
+ Ser consistentes al realizar las operaciones aritméticas con el mismo
+número de decimales que hayan definido para los campos del tipo
+importe del punto anterior.
+ Redondear al final del cálculo y no antes, el resultado al número de
+decimales que soporta la moneda.
+ En el caso del Importe de los Conceptos, el redondeo aplicará en el campo
+SubTotal del comprobante.
+ En el caso de los Descuentos de los Conceptos, el redondeo aplicará en el
+campo Descuento del comprobante
+ En el caso de los Impuestos de los Conceptos, el redondeo aplicará en el
+resumen de Impuestos, en los campos Importe de los nodos Retenciones
+y Traslados (donde deben agruparse por impuesto, TipoFactor y
+TasaOCuota).
+Fundamento Legal: Anexo 20 versión 3.3 vigente.
+75. El sistema de cómputo con el que genero mis CFDI, en el campo de
+TasaOCuota utiliza 2 decimales ¿es válido utilizar sólo 2 decimales o se
+deben de reportar 6 decimales?
+Lo correcto es que el valor registrado debe corresponder a un valor, fijo o de rango
+respectivamente, del catálogo c_TasaOCuota. Actualmente dicho catálogo sólo
+contempla el uso de los 6 decimales.
+Fundamento Legal: Anexo 20 versión 3.3 vigente.
+76. En las validaciones para determinar el rango de los campos numéricos
+con límites ¿es correcto que el límite inferior es igual al límite superior?
+No es correcto; si el límite inferior es igual al superior; seguramente se está
+aplicando mal el cálculo.
+Ejemplo:
+Conceptos
+Base
+Tasa Monto
+impuest
+o
+Límite
+inferio
+r
+Límite
+superio
+Servicio 1 1,480,791.59 0.16 236,926.65 236,926.6 r
+5
+236,926.66
+Servicio 2 1,454,021.93 0.16 232,643.51 232,643.5
+0
+232,643.51
+Servicio 3 1,343,559.33 0.16 214,969.49 214,969.4
+9
+214,969.4
+9
+En el ejemplo anterior en el límite superior se realizó un redondeo aritmético,
+siendo que se debe redondear hacia arriba.
+En resumen, lo correcto es:
+ El resultado de calcular el límite inferior truncarlo con el máximo número
+de decimales que permita el sistema (hasta 6 decimales como máximo).
+ El resultado de calcular el límite superior redondearlo hacia arriba con el
+máximo número de decimales que permita el sistema (hasta 6 decimales
+como máximo).
+Ejemplo: moneda MXN, decimales 2, importe 924.224956
+ Truncado del importe a 2 decimales: 924.22
+ Redondeado del importe hacia arriba: 924.23
+Fundamento Legal: Anexo 20 versión 3.3 vigente.
