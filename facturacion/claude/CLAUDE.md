@@ -15,6 +15,9 @@ El equipo del despacho opera el sistema completamente desde **Telegram** en leng
 
 ---
 
+## Idioma
+Responde siempre en español, independientemente del idioma del código o los comentarios.
+
 ## Stack tecnológico
 
 | Capa | Herramienta | Rol |
