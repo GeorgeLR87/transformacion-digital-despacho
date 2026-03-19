@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx shadcn@latest init --yes --defaults)",
+      "WebSearch",
+      "Bash(claude mcp:*)",
+      "Bash(npx skills:*)",
+      "Read(//c/Users/USER/AppData/Roaming/Claude/**)",
+      "Read(//c/Users/USER/.claude/**)",
+      "Bash(find .claude/ -name *.md)",
+      "Bash(for skill:*)",
+      "Bash(do)",
+      "Bash(mkdir -p \".claude/skills/$skill\")",
+      "Bash(cp \"facturacion/claude/skills/$skill.md\" \".claude/skills/$skill/SKILL.md\")",
+      "Bash(done)",
+      "Skill(git-commit)"
+    ]
+  }
+}
