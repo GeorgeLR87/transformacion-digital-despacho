@@ -1,6 +1,6 @@
-# Skill: Supabase — Schema, Queries y Patrones
-# Leer antes de cualquier tarea relacionada con base de datos o Storage
-
+---
+name: supabase
+description: Schema completo de Supabase, queries frecuentes, patrones de cliente y reglas de RLS para el módulo de facturación. Leer antes de cualquier tarea relacionada con base de datos, Storage o autenticación en este proyecto.
 ---
 
 ## Regla principal

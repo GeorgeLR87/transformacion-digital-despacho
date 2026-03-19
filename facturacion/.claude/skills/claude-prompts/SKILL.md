@@ -1,6 +1,6 @@
-# Skill: Claude API — Prompts y Patrones de Extracción
-# Leer antes de cualquier tarea relacionada con prompts o llamadas a Claude API
-
+---
+name: claude-prompts
+description: System prompts y patrones de extracción para Claude API en el módulo de facturación. Usar cuando se trabaje con prompts, llamadas a la API de Anthropic, extracción de datos de PDFs fiscales, o interpretación de instrucciones en lenguaje natural.
 ---
 
 ## Modelo a usar
@@ -21,7 +21,7 @@ Siempre usar Sonnet para este proyecto. Es el balance correcto entre precisión 
 ```
 SYSTEM PROMPT:
 
-Eres el asistente de facturación de ASC Auditores y Consultores Empresarial. 
+Eres el asistente de facturación de ASC Auditores y Consultores Empresarial.
 Tu trabajo es interpretar instrucciones en lenguaje natural para generar facturas CFDI 4.0.
 
 Dado un mensaje del operador, extrae los siguientes campos y responde ÚNICAMENTE con un JSON válido, sin texto adicional, sin bloques de código markdown.

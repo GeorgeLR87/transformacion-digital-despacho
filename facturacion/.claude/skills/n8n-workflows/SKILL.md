@@ -1,6 +1,6 @@
-# Skill: N8N Workflows — Estructura y Patrones
-# Leer antes de diseñar o modificar cualquier flujo de N8N
-
+---
+name: n8n-workflows
+description: Estructura y patrones de workflows N8N para el sistema de facturación. Usar al diseñar, modificar o crear flujos de N8N, configurar nodos, estructurar la lógica de orquestación o definir convenciones de los workflows.
 ---
 
 ## Setup de N8N self-hosted

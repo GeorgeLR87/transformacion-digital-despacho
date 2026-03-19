@@ -1,6 +1,6 @@
-# Skill: Convenciones de Código y Naming
-# Leer antes de generar cualquier código del proyecto
-
+---
+name: conventions
+description: Convenciones de código, naming y TypeScript para el proyecto de facturación. Leer antes de generar cualquier código para asegurar consistencia en naming, estructura de respuestas API, TypeScript strict y reglas de seguridad del proyecto.
 ---
 
 ## TypeScript

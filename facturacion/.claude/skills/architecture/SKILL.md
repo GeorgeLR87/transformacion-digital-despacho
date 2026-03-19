@@ -1,6 +1,6 @@
-# Skill: Arquitectura del Sistema de Facturación
-# Leer antes de cualquier decisión de diseño o estructura
-
+---
+name: architecture
+description: Arquitectura del sistema de facturación — capas, flujos principales y decisiones de diseño. Leer antes de cualquier decisión de estructura, diseño de nuevos flujos o al agregar funcionalidades al sistema.
 ---
 
 ## Capas del sistema

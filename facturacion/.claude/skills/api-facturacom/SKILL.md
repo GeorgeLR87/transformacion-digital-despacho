@@ -1,7 +1,6 @@
-# Skill: factura.com API — Integración y Patrones
-# Fuente: Colección Postman oficial "Factura.com Workspace Publico" (144 requests)
-# Última actualización: 2026-03
-
+---
+name: api-facturacom
+description: Referencia completa de la API de factura.com — endpoints, autenticación, payloads exactos y manejo de errores. Usar antes de cualquier tarea relacionada con llamadas a factura.com, timbrado de CFDIs, cancelaciones, descarga de XML/PDF o integración con el PAC.
 ---
 
 ## URLs base
