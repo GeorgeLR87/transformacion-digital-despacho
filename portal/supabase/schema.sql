@@ -90,16 +90,17 @@ CREATE UNIQUE INDEX idx_series_default_unique
 -- Catálogo de clientes frecuentes con datos fiscales
 -- ============================================================
 CREATE TABLE billing_receptores (
-  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),  -- catálogo: UUIDv4 OK
-  rfc            TEXT NOT NULL UNIQUE,
-  razon_social   TEXT NOT NULL,
-  email          TEXT NOT NULL,
-  regimen_fiscal TEXT NOT NULL,          -- clave SAT
-  uso_cfdi       TEXT NOT NULL DEFAULT 'G03', -- clave SAT default
-  cp_fiscal      TEXT NOT NULL,
-  activo         BOOLEAN NOT NULL DEFAULT true,
-  created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+  id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),  -- catálogo: UUIDv4 OK
+  rfc             TEXT NOT NULL UNIQUE,
+  razon_social    TEXT NOT NULL,
+  email           TEXT NOT NULL,
+  regimen_fiscal  TEXT NOT NULL,          -- clave SAT
+  uso_cfdi        TEXT NOT NULL DEFAULT 'G03', -- clave SAT default
+  cp_fiscal       TEXT NOT NULL,
+  uid_facturacom  TEXT UNIQUE,            -- UID hex retornado por /v1/clients/create
+  activo          BOOLEAN NOT NULL DEFAULT true,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at      TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER trg_billing_receptores_updated_at
