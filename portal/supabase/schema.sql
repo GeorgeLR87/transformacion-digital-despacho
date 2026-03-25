@@ -2,6 +2,7 @@
 -- Schema — Módulo de Facturación
 -- ASC Auditores y Consultores Empresarial
 -- Todas las tablas llevan prefijo billing_
+-- v2: 10 tablas
 -- ============================================================
 
 -- Extensión para UUIDs v7 (time-ordered) en tablas transaccionales
@@ -23,19 +24,23 @@ END;
 $$;
 
 -- ============================================================
--- billing_empresas_emisoras
+-- 1. billing_empresas_emisoras
 -- Una fila por cada RFC que el despacho maneja como emisor
 -- api_key movida a billing_empresas_api_keys (acceso restringido)
 -- ============================================================
 CREATE TABLE billing_empresas_emisoras (
-  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),  -- catálogo estático: UUIDv4 OK
-  rfc            TEXT NOT NULL UNIQUE,
-  razon_social   TEXT NOT NULL,
-  regimen_fiscal TEXT NOT NULL,          -- clave SAT ej: "601"
-  cp_fiscal      TEXT NOT NULL,
-  activo         BOOLEAN NOT NULL DEFAULT true,
-  created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+  id                     UUID PRIMARY KEY DEFAULT gen_random_uuid(),  -- catálogo estático: UUIDv4 OK
+  rfc                    TEXT NOT NULL UNIQUE,
+  razon_social           TEXT NOT NULL,
+  regimen_fiscal         TEXT NOT NULL,          -- clave SAT ej: "601"
+  cp_fiscal              TEXT NOT NULL,
+  -- CSD (Certificado de Sello Digital)
+  csd_numero_certificado TEXT,                   -- número de serie del certificado (20 dígitos)
+  csd_vigencia_inicio    DATE,                   -- inicio de vigencia del CSD
+  csd_vigencia_fin       DATE,                   -- fin de vigencia del CSD
+  activo                 BOOLEAN NOT NULL DEFAULT true,
+  created_at             TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at             TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE TRIGGER trg_billing_empresas_updated_at
@@ -43,7 +48,7 @@ CREATE TRIGGER trg_billing_empresas_updated_at
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 -- ============================================================
--- billing_empresas_api_keys
+-- 2. billing_empresas_api_keys
 -- API Keys de factura.com separadas en tabla propia.
 -- Sin política RLS para authenticated → solo service_role accede
 -- (N8N y Edge Functions usan service_role; el dashboard no necesita esta key)
@@ -59,9 +64,9 @@ CREATE TRIGGER trg_billing_api_keys_updated_at
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 -- ============================================================
--- billing_series_emisoras
+-- 3. billing_series_emisoras
 -- Cada RFC puede tener múltiples series (A, B, FAC, etc.)
--- uid_facturacom: ID de la serie en factura.com para vincular al timbrar
+-- uid_facturacom: ID numérico de la serie en factura.com (NO la letra)
 -- ============================================================
 CREATE TABLE billing_series_emisoras (
   id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),  -- catálogo estático: UUIDv4 OK
@@ -70,7 +75,7 @@ CREATE TABLE billing_series_emisoras (
   descripcion    TEXT,
   es_default     BOOLEAN NOT NULL DEFAULT false,
   activa         BOOLEAN NOT NULL DEFAULT true,
-  uid_facturacom BIGINT,                  -- ID de serie en factura.com (BIGINT por seguridad)
+  uid_facturacom BIGINT,                  -- ID numérico de la serie en factura.com
   created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
   UNIQUE(empresa_id, serie)
 );
@@ -81,7 +86,7 @@ CREATE UNIQUE INDEX idx_series_default_unique
   WHERE es_default = true;
 
 -- ============================================================
--- billing_receptores
+-- 4. billing_receptores
 -- Catálogo de clientes frecuentes con datos fiscales
 -- ============================================================
 CREATE TABLE billing_receptores (
@@ -102,7 +107,7 @@ CREATE TRIGGER trg_billing_receptores_updated_at
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 -- ============================================================
--- billing_conceptos
+-- 5. billing_conceptos
 -- Catálogo de servicios/productos por empresa emisora
 -- ============================================================
 CREATE TABLE billing_conceptos (
@@ -120,34 +125,40 @@ CREATE TABLE billing_conceptos (
 );
 
 -- ============================================================
--- billing_facturas
+-- 6. billing_facturas
 -- Registro principal de cada CFDI timbrado
 -- UUIDv7: time-ordered → inserts secuenciales, sin fragmentación de índice
 -- ============================================================
 CREATE TABLE billing_facturas (
-  id               UUID PRIMARY KEY DEFAULT uuid_generate_v7(),
-  uuid_sat         TEXT UNIQUE,            -- UUID del SAT, null hasta timbrar
-  folio            TEXT,                   -- asignado por factura.com
-  serie            TEXT NOT NULL,          -- valor inmutable embebido en el CFDI
-  serie_id         UUID REFERENCES billing_series_emisoras(id), -- FK de validación al crear
-  empresa_id       UUID NOT NULL REFERENCES billing_empresas_emisoras(id),
-  receptor_id      UUID NOT NULL REFERENCES billing_receptores(id),
-  fecha_emision    TIMESTAMPTZ NOT NULL DEFAULT now(),
-  subtotal         NUMERIC(12,2) NOT NULL,
-  iva              NUMERIC(12,2) NOT NULL,
-  total            NUMERIC(12,2) NOT NULL,
-  metodo_pago      TEXT NOT NULL CHECK (metodo_pago IN ('PUE', 'PPD')),
-  forma_pago       TEXT NOT NULL,          -- clave SAT ej: "03" (transferencia)
-  moneda           TEXT NOT NULL DEFAULT 'MXN' CHECK (moneda ~ '^[A-Z]{3}$'),
-  tipo_cambio      NUMERIC(10,4) DEFAULT 1.0,
-  status           TEXT NOT NULL DEFAULT 'borrador'
-                     CHECK (status IN ('borrador', 'pendiente_confirmacion', 'timbrada', 'cancelada', 'error')),
-  url_xml          TEXT,                   -- Supabase Storage path
-  url_pdf          TEXT,                   -- Supabase Storage path
-  notas_internas   TEXT,
-  telegram_chat_id TEXT,                   -- para notificar de vuelta
-  created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
-  updated_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+  id                     UUID PRIMARY KEY DEFAULT uuid_generate_v7(),
+  uuid                   TEXT UNIQUE,            -- UUID fiscal del SAT (null hasta timbrar)
+  uid_facturacom         TEXT,                   -- UID interno de factura.com para este CFDI
+  folio                  TEXT,                   -- asignado por factura.com
+  serie                  TEXT NOT NULL,          -- valor inmutable embebido en el CFDI
+  serie_id               UUID REFERENCES billing_series_emisoras(id), -- FK de validación al crear
+  empresa_id             UUID NOT NULL REFERENCES billing_empresas_emisoras(id),
+  receptor_id            UUID NOT NULL REFERENCES billing_receptores(id),
+  fecha_emision          TIMESTAMPTZ NOT NULL DEFAULT now(),
+  subtotal               NUMERIC(12,2) NOT NULL,
+  iva                    NUMERIC(12,2) NOT NULL,
+  total                  NUMERIC(12,2) NOT NULL,
+  metodo_pago            TEXT NOT NULL CHECK (metodo_pago IN ('PUE', 'PPD')),
+  forma_pago             TEXT NOT NULL,          -- clave SAT ej: "03" (transferencia)
+  moneda                 TEXT NOT NULL DEFAULT 'MXN' CHECK (moneda ~ '^[A-Z]{3}$'),
+  tipo_cambio            NUMERIC(10,4) DEFAULT 1.0,
+  status                 TEXT NOT NULL DEFAULT 'borrador'
+                           CHECK (status IN ('borrador', 'pendiente_confirmacion', 'timbrada', 'cancelada', 'error')),
+  -- seguimiento de pago (relevante para facturas PPD con complemento de pago)
+  status_pago            TEXT NOT NULL DEFAULT 'no_aplica'
+                           CHECK (status_pago IN ('no_aplica', 'pendiente', 'parcial', 'pagado')),
+  monto_pagado_acumulado NUMERIC(12,2) NOT NULL DEFAULT 0,
+  saldo_insoluto         NUMERIC(12,2),          -- se actualiza al registrar cada pago PPD
+  xml_storage_path       TEXT,                   -- path en Supabase Storage
+  pdf_storage_path       TEXT,                   -- path en Supabase Storage
+  notas_internas         TEXT,
+  telegram_chat_id       TEXT,                   -- para notificar de vuelta al operador
+  created_at             TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at             TIMESTAMPTZ NOT NULL DEFAULT now(),
   -- total debe ser consistente con subtotal + iva (tolerancia de 1 centavo por redondeo)
   CONSTRAINT billing_facturas_total_check CHECK (ABS(total - (subtotal + iva)) < 0.01),
   -- serie_id debe estar poblado en cualquier estado distinto de borrador
@@ -159,7 +170,7 @@ CREATE TRIGGER trg_billing_facturas_updated_at
   FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 -- ============================================================
--- billing_conceptos_factura
+-- 7. billing_conceptos_factura
 -- Detalle de líneas por factura
 -- importe e importe_iva son columnas generadas para garantizar consistencia
 -- UUIDv7: tabla de mayor volumen de inserts del módulo
@@ -181,7 +192,7 @@ CREATE TABLE billing_conceptos_factura (
 );
 
 -- ============================================================
--- billing_pagos
+-- 8. billing_pagos
 -- Complementos de pago (REP) vinculados a facturas PPD
 -- UUIDv7: tabla transaccional — inserts frecuentes en ciclo de vida PPD
 -- ============================================================
@@ -201,6 +212,39 @@ CREATE TABLE billing_pagos (
   status          TEXT NOT NULL DEFAULT 'pendiente'
                     CHECK (status IN ('pendiente', 'timbrado', 'error')),
   created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ============================================================
+-- 9. billing_cfdi_eventos
+-- Log de eventos del ciclo de vida de cada CFDI
+-- Solo inserts (append-only) — nunca se actualiza ni elimina
+-- ============================================================
+CREATE TABLE billing_cfdi_eventos (
+  id               UUID PRIMARY KEY DEFAULT uuid_generate_v7(),
+  factura_id       UUID NOT NULL REFERENCES billing_facturas(id) ON DELETE CASCADE,
+  evento           TEXT NOT NULL
+                     CHECK (evento IN (
+                       'creado', 'timbrado', 'enviado',
+                       'cancelacion_solicitada', 'cancelado',
+                       'pago_registrado', 'error'
+                     )),
+  descripcion      TEXT,
+  payload_response JSONB,                -- respuesta cruda de factura.com (para debugging)
+  created_at       TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+-- ============================================================
+-- 10. billing_catalogo_sat
+-- Catálogos del SAT: clave_prod_serv, clave_unidad, régimen fiscal, uso_cfdi, etc.
+-- Se pobla desde seed.sql con el subconjunto relevante para el despacho
+-- ============================================================
+CREATE TABLE billing_catalogo_sat (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  tipo        TEXT NOT NULL,             -- 'clave_prod_serv' | 'clave_unidad' | 'regimen_fiscal' | 'uso_cfdi' | 'forma_pago'
+  clave       TEXT NOT NULL,
+  descripcion TEXT NOT NULL,
+  activo      BOOLEAN NOT NULL DEFAULT true,
+  UNIQUE(tipo, clave)
 );
 
 -- ============================================================
@@ -233,11 +277,16 @@ CREATE INDEX idx_conceptos_factura_concepto ON billing_conceptos_factura(concept
 -- billing_pagos
 CREATE INDEX idx_pagos_factura ON billing_pagos(factura_id);
 
+-- billing_cfdi_eventos
+CREATE INDEX idx_cfdi_eventos_factura ON billing_cfdi_eventos(factura_id);
+
+-- billing_catalogo_sat
+CREATE INDEX idx_catalogo_sat_tipo ON billing_catalogo_sat(tipo) WHERE activo = true;
+
 -- ============================================================
 -- Row Level Security
 -- ============================================================
 
--- Tablas del módulo: solo usuarios autenticados del despacho
 ALTER TABLE billing_empresas_emisoras   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE billing_empresas_emisoras   FORCE ROW LEVEL SECURITY;
 ALTER TABLE billing_series_emisoras     ENABLE ROW LEVEL SECURITY;
@@ -252,6 +301,10 @@ ALTER TABLE billing_conceptos_factura   ENABLE ROW LEVEL SECURITY;
 ALTER TABLE billing_conceptos_factura   FORCE ROW LEVEL SECURITY;
 ALTER TABLE billing_pagos               ENABLE ROW LEVEL SECURITY;
 ALTER TABLE billing_pagos               FORCE ROW LEVEL SECURITY;
+ALTER TABLE billing_cfdi_eventos        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE billing_cfdi_eventos        FORCE ROW LEVEL SECURITY;
+ALTER TABLE billing_catalogo_sat        ENABLE ROW LEVEL SECURITY;
+ALTER TABLE billing_catalogo_sat        FORCE ROW LEVEL SECURITY;
 
 -- billing_empresas_api_keys: habilitado pero SIN política para authenticated
 -- → solo service_role puede leer/escribir (N8N, Edge Functions)
@@ -286,4 +339,12 @@ CREATE POLICY billing_authenticated_conceptos_factura
 
 CREATE POLICY billing_authenticated_pagos
   ON billing_pagos FOR ALL TO authenticated
+  USING (true) WITH CHECK (true);
+
+CREATE POLICY billing_authenticated_cfdi_eventos
+  ON billing_cfdi_eventos FOR ALL TO authenticated
+  USING (true) WITH CHECK (true);
+
+CREATE POLICY billing_authenticated_catalogo_sat
+  ON billing_catalogo_sat FOR ALL TO authenticated
   USING (true) WITH CHECK (true);
