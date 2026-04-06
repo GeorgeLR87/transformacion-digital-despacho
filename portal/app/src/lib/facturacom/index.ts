@@ -42,6 +42,13 @@ export {
 } from "./sync-productos";
 
 export {
+  cancelCfdi,
+  type CancelCfdiParams,
+  type CancelResult,
+  type MotivoCancel,
+} from "./cancelacion";
+
+export {
   saveCfdiFiles,
   type StorageResult,
   type SaveCfdiFilesParams,
