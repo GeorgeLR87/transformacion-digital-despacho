@@ -37,18 +37,22 @@ export type MetodoPago = typeof METODO_PAGO[keyof typeof METODO_PAGO]
 
 ## Estructura de API Routes (Next.js)
 
-Base: `/api/v1/`
+Base: `/api/`
 
 ```
-/api/v1/facturas              GET (listado) | POST (crear)
-/api/v1/facturas/[id]         GET (detalle)
-/api/v1/facturas/[id]/reenviar POST (reenviar correo)
-/api/v1/emisores              GET | POST
-/api/v1/receptores            GET | POST
-/api/v1/conceptos             GET | POST
-/api/v1/fiscal/extract        POST (extraer datos de PDF constancia)
-/api/v1/pagos                 GET | POST (complementos de pago)
+/api/empresas                          GET (listado)
+/api/empresas/[id]                     GET (detalle + series)
+/api/empresas/[id]/series              GET (series de la empresa)
+/api/empresas/[id]/series/sync         POST (sync desde factura.com)
+/api/empresas/[id]/receptores/sync     POST (sync desde factura.com)
+/api/receptores                        GET (listado con filtros)
+/api/facturas                          GET (listado) | POST (timbrar CFDI)
+/api/facturas/[id]                     GET (detalle + conceptos + pagos)
+/api/facturas/[id]/pdf                 GET (descargar PDF)
+/api/facturas/[id]/xml                 GET (descargar XML)
 ```
+
+Helper compartido en `lib/api/helpers.ts`: `requireAuth()`, `apiSuccess()`, `apiError()`, `getFacturaComCredentials()`.
 
 ---
 
@@ -128,13 +132,29 @@ const apiKey = process.env.ANTHROPIC_API_KEY!
 
 ## Estrategia de branches
 
+```
+main          ← producción (protegida, solo PRs desde dev)
+  └── dev     ← desarrollo activo (aquí se mergean features)
+       ├── feat/orden-XX-descripcion
+       └── fix/descripcion
+```
+
 | Branch | Uso |
 |--------|-----|
-| `main` | Producción — protegido, requiere PR |
-| `staging` | Pre-producción — pruebas antes de merge |
-| `develop` | Base de trabajo diario |
-| `feature/nombre` | Desde develop |
-| `fix/nombre` | Desde develop o main |
+| `main` | Producción — protegida, solo recibe PRs desde `dev` |
+| `dev` | Desarrollo activo — Claude Code mergea features aquí directamente |
+| `feat/*` | Features individuales — se crean desde `dev`, se mergean a `dev` |
+| `fix/*` | Correcciones — se crean desde `dev`, se mergean a `dev` |
+
+**Flujo diario (Claude Code):**
+1. Crear rama `feat/*` o `fix/*` desde `dev`
+2. Implementar, verificar build, mergear a `dev`
+3. Al cerrar fase o bloque estable → PR `dev → main`
+
+**Reglas:**
+- Nunca push directo a `main` (protegida con branch rules)
+- `dev` es la rama base de trabajo, no `main`
+- Nombres de rama: `feat/orden-25-api-routes`, `fix/zod-v4-compat`
 
 ---
 
