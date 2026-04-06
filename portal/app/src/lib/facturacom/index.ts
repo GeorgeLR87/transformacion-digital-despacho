@@ -42,6 +42,17 @@ export {
 } from "./sync-productos";
 
 export {
+  createCfdiPue,
+  createCfdiPpd,
+  createCfdiRep,
+  type TimbradoResult,
+  type ConceptoInput,
+  type CreatePueParams,
+  type CreatePpdParams,
+  type CreateRepParams,
+} from "./timbrado";
+
+export {
   validateCfdiFactura,
   validateCfdiRep,
   formatValidationErrors,

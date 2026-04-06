@@ -14,10 +14,10 @@ import {
   getFacturaComCredentials,
 } from "@/lib/api/helpers";
 import {
-  createFacturaComClient,
-  validateCfdiFactura,
-  validateCfdiRep,
-  formatValidationErrors,
+  createCfdiPue,
+  createCfdiPpd,
+  createCfdiRep,
+  type ConceptoInput,
 } from "@/lib/facturacom";
 
 // ---------------------------------------------------------------------------
@@ -62,40 +62,43 @@ export async function GET(req: NextRequest) {
 }
 
 // ---------------------------------------------------------------------------
-// POST — Crear / timbrar CFDI
+// POST — Crear / timbrar CFDI (delega a funciones especializadas por tipo)
 // ---------------------------------------------------------------------------
+
+interface FacturaPostBody {
+  tipo: "pue" | "ppd" | "rep";
+  empresa_id: string;
+  receptor_uid: string;
+  receptor_id: string;
+  serie_uid: number;
+  conceptos?: ConceptoInput[];
+  forma_pago?: string;
+  uso_cfdi?: string;
+  moneda?: string;
+  tipo_cambio?: number;
+  observaciones?: string;
+  // Campos específicos para REP
+  factura_ppd_id?: string;
+  serie_pago_uid?: number;
+  fecha_pago?: string;
+  monto?: number;
+  moneda_pago?: string;
+  referencia?: string;
+}
 
 export async function POST(req: NextRequest) {
   const user = await requireAuth();
   if (!user) return apiError("No autenticado", 401);
 
-  const body = await parseJsonBody<Record<string, unknown>>(req);
+  const body = await parseJsonBody<FacturaPostBody>(req);
   if (!body) return apiError("Body JSON inválido", 400, "INVALID_JSON");
 
-  // Determinar tipo de CFDI y empresa
-  const empresaId = body.empresa_id as string | undefined;
-  if (!empresaId) return apiError("empresa_id es requerido", 400, "MISSING_FIELD");
-
-  // Validar payload según tipo
-  const tipoCfdi = body.TipoCfdi ?? body.TipoDocumento;
-  let payloadValidado: Record<string, unknown>;
-
-  if (tipoCfdi === "pago") {
-    const result = validateCfdiRep(body);
-    if (!result.success) {
-      return apiError(formatValidationErrors(result.errors), 400, "VALIDATION_ERROR");
-    }
-    payloadValidado = result.data as unknown as Record<string, unknown>;
-  } else {
-    const result = validateCfdiFactura(body);
-    if (!result.success) {
-      return apiError(formatValidationErrors(result.errors), 400, "VALIDATION_ERROR");
-    }
-    payloadValidado = result.data as unknown as Record<string, unknown>;
-  }
+  const { tipo, empresa_id } = body;
+  if (!empresa_id) return apiError("empresa_id es requerido", 400, "MISSING_FIELD");
+  if (!tipo) return apiError("tipo es requerido (pue, ppd, rep)", 400, "MISSING_FIELD");
 
   // Obtener credenciales de factura.com
-  const creds = await getFacturaComCredentials(empresaId);
+  const creds = await getFacturaComCredentials(empresa_id);
   if (!creds) {
     return apiError(
       "No se encontraron credenciales de factura.com para esta empresa",
@@ -104,73 +107,71 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Timbrar en factura.com
-  const facturaClient = createFacturaComClient(creds);
+  // Delegar según tipo de CFDI
+  if (tipo === "pue") {
+    if (!body.conceptos?.length) return apiError("conceptos es requerido para PUE", 400, "MISSING_FIELD");
+    if (!body.forma_pago) return apiError("forma_pago es requerido para PUE", 400, "MISSING_FIELD");
 
-  let cfdiResponse;
-  try {
-    cfdiResponse = await facturaClient.createCfdi(payloadValidado);
-  } catch (err) {
-    const message =
-      err instanceof Error ? err.message : "Error al timbrar en factura.com";
-    return apiError(message, 502, "FACTURACOM_ERROR");
+    const result = await createCfdiPue({
+      empresa_id,
+      receptor_uid: body.receptor_uid,
+      receptor_id: body.receptor_id,
+      serie_uid: body.serie_uid,
+      conceptos: body.conceptos,
+      forma_pago: body.forma_pago,
+      uso_cfdi: body.uso_cfdi ?? "G03",
+      moneda: body.moneda,
+      tipo_cambio: body.tipo_cambio,
+      observaciones: body.observaciones,
+      credentials: creds,
+    });
+
+    if (!result.success) return apiError(result.error!, 400, "TIMBRADO_ERROR");
+    return apiSuccess(result.factura, { cfdi: result.cfdiResponse });
   }
 
-  // Registrar en Supabase
-  const supabase = await createClient();
+  if (tipo === "ppd") {
+    if (!body.conceptos?.length) return apiError("conceptos es requerido para PPD", 400, "MISSING_FIELD");
 
-  const receptorId = body.receptor_id as string | undefined;
-  const conceptos = body.Conceptos as Array<Record<string, unknown>> | undefined;
+    const result = await createCfdiPpd({
+      empresa_id,
+      receptor_uid: body.receptor_uid,
+      receptor_id: body.receptor_id,
+      serie_uid: body.serie_uid,
+      conceptos: body.conceptos,
+      uso_cfdi: body.uso_cfdi ?? "G03",
+      moneda: body.moneda,
+      tipo_cambio: body.tipo_cambio,
+      observaciones: body.observaciones,
+      credentials: creds,
+    });
 
-  // Calcular totales del payload
-  const subtotal =
-    (conceptos ?? []).reduce((acc, c) => {
-      const qty = Number(c.Cantidad ?? 0);
-      const price = Number(c.ValorUnitario ?? 0);
-      return acc + qty * price;
-    }, 0);
-  const tasaIva = 0.16;
-  const iva = subtotal * tasaIva;
-  const total = subtotal + iva;
-
-  const { data: factura, error: insertError } = await supabase
-    .from("billing_facturas")
-    .insert({
-      empresa_id: empresaId,
-      receptor_id: receptorId ?? "",
-      uuid: cfdiResponse.UUID ?? cfdiResponse.SAT?.UUID ?? null,
-      uid_facturacom: cfdiResponse.uid ?? null,
-      serie: cfdiResponse.INV?.Serie ?? String(payloadValidado.Serie ?? ""),
-      folio: cfdiResponse.INV?.Folio ? String(cfdiResponse.INV.Folio) : null,
-      fecha_emision: new Date().toISOString(),
-      subtotal,
-      iva,
-      total,
-      moneda: (payloadValidado.Moneda as string) ?? "MXN",
-      metodo_pago: (payloadValidado.MetodoPago as string) ?? "PUE",
-      forma_pago: (payloadValidado.FormaPago as string) ?? "99",
-      status: cfdiResponse.UUID ? "timbrada" : "borrador",
-      status_pago: (payloadValidado.MetodoPago as string) === "PPD" ? "pendiente" : "pagada",
-    })
-    .select()
-    .single();
-
-  if (insertError) {
-    // El CFDI ya se timbró — loggear error pero devolver el resultado de factura.com
-    console.error("[POST /api/facturas] Error al insertar en Supabase:", insertError.message);
-    return apiSuccess(
-      { cfdi: cfdiResponse, supabase_error: insertError.message },
-      { warning: "CFDI timbrado pero hubo error al guardar en Supabase" }
-    );
+    if (!result.success) return apiError(result.error!, 400, "TIMBRADO_ERROR");
+    return apiSuccess(result.factura, { cfdi: result.cfdiResponse });
   }
 
-  // Registrar evento de timbrado
-  await supabase.from("billing_cfdi_eventos").insert({
-    factura_id: factura.id,
-    evento: cfdiResponse.UUID ? "timbrado" : "borrador_creado",
-    descripcion: `CFDI ${cfdiResponse.UUID ? "timbrado" : "guardado como borrador"} vía dashboard`,
-    payload_response: JSON.parse(JSON.stringify(cfdiResponse)),
-  });
+  if (tipo === "rep") {
+    if (!body.factura_ppd_id) return apiError("factura_ppd_id es requerido para REP", 400, "MISSING_FIELD");
+    if (!body.fecha_pago) return apiError("fecha_pago es requerido para REP", 400, "MISSING_FIELD");
+    if (!body.monto) return apiError("monto es requerido para REP", 400, "MISSING_FIELD");
+    if (!body.forma_pago) return apiError("forma_pago es requerido para REP", 400, "MISSING_FIELD");
 
-  return apiSuccess(factura, { uid_facturacom: cfdiResponse.uid, uuid_sat: cfdiResponse.UUID });
+    const result = await createCfdiRep({
+      empresa_id,
+      factura_ppd_id: body.factura_ppd_id,
+      receptor_uid: body.receptor_uid,
+      serie_pago_uid: body.serie_pago_uid ?? body.serie_uid,
+      forma_pago: body.forma_pago,
+      fecha_pago: body.fecha_pago,
+      monto: body.monto,
+      moneda_pago: body.moneda_pago,
+      referencia: body.referencia,
+      credentials: creds,
+    });
+
+    if (!result.success) return apiError(result.error!, 400, "TIMBRADO_ERROR");
+    return apiSuccess(result.pago, { cfdi: result.cfdiResponse });
+  }
+
+  return apiError("tipo inválido — debe ser pue, ppd o rep", 400, "INVALID_TYPE");
 }
