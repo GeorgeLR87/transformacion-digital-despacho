@@ -36,6 +36,12 @@ export {
 } from "./sync-series";
 
 export {
+  syncProductosFacturaCom,
+  type SyncProductosOptions,
+  type SyncProductosResult,
+} from "./sync-productos";
+
+export {
   validateCfdiFactura,
   validateCfdiRep,
   formatValidationErrors,
