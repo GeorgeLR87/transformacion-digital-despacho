@@ -17,7 +17,9 @@ import {
   createCfdiPue,
   createCfdiPpd,
   createCfdiRep,
+  createCfdiGlobal,
   type ConceptoInput,
+  type Periodicidad,
 } from "@/lib/facturacom";
 
 // ---------------------------------------------------------------------------
@@ -66,7 +68,7 @@ export async function GET(req: NextRequest) {
 // ---------------------------------------------------------------------------
 
 interface FacturaPostBody {
-  tipo: "pue" | "ppd" | "rep";
+  tipo: "pue" | "ppd" | "rep" | "global";
   empresa_id: string;
   receptor_uid: string;
   receptor_id: string;
@@ -84,6 +86,10 @@ interface FacturaPostBody {
   monto?: number;
   moneda_pago?: string;
   referencia?: string;
+  // Campos específicos para Global
+  periodicidad?: Periodicidad;
+  meses?: string;
+  anio?: number;
 }
 
 export async function POST(req: NextRequest) {
@@ -173,5 +179,29 @@ export async function POST(req: NextRequest) {
     return apiSuccess(result.pago, { cfdi: result.cfdiResponse });
   }
 
-  return apiError("tipo inválido — debe ser pue, ppd o rep", 400, "INVALID_TYPE");
+  if (tipo === "global") {
+    if (!body.conceptos?.length) return apiError("conceptos es requerido para Global", 400, "MISSING_FIELD");
+    if (!body.periodicidad) return apiError("periodicidad es requerido para Global", 400, "MISSING_FIELD");
+    if (!body.meses) return apiError("meses es requerido para Global", 400, "MISSING_FIELD");
+    if (!body.anio) return apiError("anio es requerido para Global", 400, "MISSING_FIELD");
+
+    const result = await createCfdiGlobal({
+      empresa_id,
+      receptor_uid: body.receptor_uid,
+      serie_uid: body.serie_uid,
+      conceptos: body.conceptos,
+      forma_pago: body.forma_pago ?? "99",
+      moneda: body.moneda,
+      periodicidad: body.periodicidad,
+      meses: body.meses,
+      anio: body.anio,
+      observaciones: body.observaciones,
+      credentials: creds,
+    });
+
+    if (!result.success) return apiError(result.error!, 400, "TIMBRADO_ERROR");
+    return apiSuccess(result.factura, { cfdi: result.cfdiResponse });
+  }
+
+  return apiError("tipo inválido — debe ser pue, ppd, rep o global", 400, "INVALID_TYPE");
 }

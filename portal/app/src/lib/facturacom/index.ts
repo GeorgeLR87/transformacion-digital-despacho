@@ -51,11 +51,14 @@ export {
   createCfdiPue,
   createCfdiPpd,
   createCfdiRep,
+  createCfdiGlobal,
   type TimbradoResult,
   type ConceptoInput,
   type CreatePueParams,
   type CreatePpdParams,
   type CreateRepParams,
+  type CreateGlobalParams,
+  type Periodicidad,
 } from "./timbrado";
 
 export {

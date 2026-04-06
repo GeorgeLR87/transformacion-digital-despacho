@@ -2,10 +2,11 @@
  * @file lib/facturacom/timbrado.ts
  * @description Funciones de negocio para timbrado de CFDIs por tipo.
  *
- * Tres funciones principales:
- * - createCfdiPue()  → Factura con pago en una exhibición
- * - createCfdiPpd()  → Factura con pago en parcialidades (requiere REP posterior)
- * - createCfdiRep()  → Complemento de Pago v2.0 para facturas PPD
+ * Cuatro funciones principales:
+ * - createCfdiPue()    → Factura con pago en una exhibición
+ * - createCfdiPpd()    → Factura con pago en parcialidades (requiere REP posterior)
+ * - createCfdiRep()    → Complemento de Pago v2.0 para facturas PPD
+ * - createCfdiGlobal() → Factura al público en general (RFC XAXX010101000)
  *
  * Cada función: valida → timbra en factura.com → registra en Supabase → devuelve resultado.
  *
@@ -642,6 +643,212 @@ export async function createCfdiRep(params: CreateRepParams): Promise<TimbradoRe
       num_parcialidad: pago.num_parcialidad,
       monto: pago.monto,
       saldo_insoluto: pago.saldo_insoluto,
+    },
+    cfdiResponse,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Orden 29 — Crear CFDI Global (factura al público en general)
+// ---------------------------------------------------------------------------
+
+/**
+ * Periodicidad SAT para InformacionGlobal:
+ * 01=Diario, 02=Semanal, 03=Quincenal, 04=Mensual, 05=Bimestral
+ */
+export type Periodicidad = "01" | "02" | "03" | "04" | "05";
+
+export interface CreateGlobalParams {
+  empresa_id: string;
+  /** UID hex de XAXX010101000 en factura.com */
+  receptor_uid: string;
+  /** UID numérico de la serie en factura.com */
+  serie_uid: number;
+  conceptos: ConceptoInput[];
+  forma_pago: string;
+  moneda?: string;
+  /** Periodicidad SAT: 01=Diario, 02=Semanal, 03=Quincenal, 04=Mensual, 05=Bimestral */
+  periodicidad: Periodicidad;
+  /** Mes(es) que cubre: "01"-"12" o "13"-"18" para bimestres */
+  meses: string;
+  /** Año fiscal */
+  anio: number;
+  observaciones?: string;
+  credentials: FacturaComCredentials;
+}
+
+/**
+ * Crea y timbra un CFDI Global (facturas al público en general).
+ *
+ * Reglas SAT para CFDI Global:
+ * - RFC receptor: XAXX010101000
+ * - Régimen receptor: 616 (Sin obligaciones fiscales)
+ * - UsoCFDI: S01 (Sin efectos fiscales)
+ * - MetodoPago: PUE
+ * - Requiere nodo InformacionGlobal con Periodicidad, Meses y Año
+ * - FormaPago según cómo pagaron los clientes del periodo
+ */
+export async function createCfdiGlobal(params: CreateGlobalParams): Promise<TimbradoResult> {
+  const {
+    empresa_id,
+    receptor_uid,
+    serie_uid,
+    conceptos,
+    forma_pago,
+    moneda = "MXN",
+    periodicidad,
+    meses,
+    anio,
+    observaciones,
+    credentials,
+  } = params;
+
+  // Construir conceptos
+  const conceptosPayload = conceptos.map((c) => {
+    const tasaIva = c.tasa_iva ?? 0.16;
+    const objetoImp = c.objeto_imp ?? "02";
+    const base = c.cantidad * c.valor_unitario;
+
+    return {
+      ClaveProdServ: c.clave_prod_serv,
+      Cantidad: c.cantidad,
+      ClaveUnidad: c.clave_unidad,
+      Descripcion: c.descripcion,
+      ValorUnitario: c.valor_unitario,
+      ObjetoImp: objetoImp,
+      ...(objetoImp === "02"
+        ? {
+            Impuestos: {
+              Traslados: [
+                {
+                  Base: parseFloat(base.toFixed(6)),
+                  Impuesto: "002",
+                  TipoFactor: "Tasa" as const,
+                  TasaOCuota: tasaIva.toFixed(6),
+                  Importe: parseFloat((base * tasaIva).toFixed(6)),
+                },
+              ],
+            },
+          }
+        : {}),
+    };
+  });
+
+  // Payload con InformacionGlobal — campo específico de CFDI Global
+  const payload: Record<string, unknown> = {
+    Receptor: { UID: receptor_uid },
+    TipoDocumento: "factura",
+    Conceptos: conceptosPayload,
+    UsoCFDI: "S01", // Siempre S01 para público en general
+    Serie: serie_uid,
+    FormaPago: forma_pago,
+    MetodoPago: "PUE",
+    Moneda: moneda,
+    EnviarCorreo: false,
+    InformacionGlobal: {
+      Periodicidad: periodicidad,
+      Meses: meses,
+      Año: anio,
+    },
+    ...(observaciones ? { Observaciones: observaciones } : {}),
+  };
+
+  // Validar con el schema de factura ordinaria (CFDI Global usa el mismo tipo base)
+  const validation = validateCfdiFactura(payload);
+  if (!validation.success) {
+    return { success: false, error: formatValidationErrors(validation.errors) };
+  }
+
+  // Timbrar — enviamos el payload original (no el validado) porque InformacionGlobal
+  // no está en el Zod schema pero factura.com sí lo necesita
+  const client = createFacturaComClient(credentials);
+  let cfdiResponse: CfdiCreateResponse;
+  try {
+    cfdiResponse = await client.createCfdi(payload);
+  } catch (err) {
+    return {
+      success: false,
+      error: err instanceof Error ? err.message : "Error al timbrar CFDI Global en factura.com",
+    };
+  }
+
+  // Calcular totales
+  const subtotal = conceptos.reduce((acc, c) => acc + c.cantidad * c.valor_unitario, 0);
+  const iva = conceptos.reduce((acc, c) => {
+    const tasa = c.tasa_iva ?? 0.16;
+    const obj = c.objeto_imp ?? "02";
+    return acc + (obj === "02" ? c.cantidad * c.valor_unitario * tasa : 0);
+  }, 0);
+  const total = subtotal + iva;
+
+  // Registrar en Supabase
+  const supabase = getSupabaseAdmin();
+
+  const { data: factura, error: insertError } = await supabase
+    .from("billing_facturas")
+    .insert({
+      empresa_id,
+      receptor_id: "", // CFDI Global no tiene receptor individual
+      uuid: cfdiResponse.UUID ?? cfdiResponse.SAT?.UUID ?? null,
+      uid_facturacom: cfdiResponse.uid ?? null,
+      serie: cfdiResponse.INV?.Serie ?? String(serie_uid),
+      folio: cfdiResponse.INV?.Folio ? String(cfdiResponse.INV.Folio) : null,
+      fecha_emision: new Date().toISOString(),
+      subtotal,
+      iva,
+      total,
+      moneda,
+      metodo_pago: "PUE",
+      forma_pago,
+      status: cfdiResponse.UUID ? "timbrada" : "borrador",
+      status_pago: "pagada",
+      notas_internas: `CFDI Global · Periodicidad ${periodicidad} · Meses ${meses} · Año ${anio}`,
+    })
+    .select()
+    .single();
+
+  if (insertError) {
+    return {
+      success: false,
+      error: `CFDI Global timbrado (${cfdiResponse.uid}) pero error al guardar: ${insertError.message}`,
+      cfdiResponse,
+    };
+  }
+
+  // Insertar conceptos
+  const conceptosFactura = conceptos.map((c) => ({
+    factura_id: factura.id,
+    concepto_id: c.concepto_id ?? null,
+    clave_prod_serv: c.clave_prod_serv,
+    clave_unidad: c.clave_unidad,
+    descripcion: c.descripcion,
+    cantidad: c.cantidad,
+    precio_unitario: c.valor_unitario,
+    tasa_iva: c.tasa_iva ?? 0.16,
+    importe: c.cantidad * c.valor_unitario,
+    importe_iva: c.cantidad * c.valor_unitario * (c.tasa_iva ?? 0.16),
+  }));
+
+  await supabase.from("billing_conceptos_factura").insert(conceptosFactura);
+
+  // Registrar evento
+  await supabase.from("billing_cfdi_eventos").insert({
+    factura_id: factura.id,
+    evento: cfdiResponse.UUID ? "timbrado" : "borrador_creado",
+    descripcion: `CFDI Global ${cfdiResponse.UUID ? "timbrado" : "borrador"} · Periodicidad ${periodicidad} · Meses ${meses}/${anio}`,
+    payload_response: JSON.parse(JSON.stringify(cfdiResponse)),
+  });
+
+  return {
+    success: true,
+    factura: {
+      id: factura.id,
+      uuid: factura.uuid,
+      uid_facturacom: factura.uid_facturacom,
+      serie: factura.serie,
+      folio: factura.folio,
+      total: factura.total,
+      status: factura.status,
     },
     cfdiResponse,
   };
