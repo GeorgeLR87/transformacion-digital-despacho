@@ -129,6 +129,22 @@ NEXT_PUBLIC_APP_URL=
 
 ---
 
+## Testing
+
+- **Framework**: Vitest 3.x (`npm test`, `npm run test:watch`, `npm run test:coverage`)
+- **Ubicación de tests**: `app/src/__tests__/` reflejando la estructura de `src/lib/`
+- **Nomenclatura**: `<módulo>.test.ts` — describes y nombres de test en español
+- **Estructura**: `describe('Módulo') > describe('función') > it('debería...')`
+- **Plan completo**: ver `docs/testing/fase-5-testing.md`
+- **Reglas**:
+  - Nunca mockear Zod — siempre validar con los schemas reales
+  - Mockear factura.com con MSW — nunca consumir folios reales en tests
+  - Mockear Supabase manualmente — no depender de conexión a DB
+  - Los datetimes en Zod 4 requieren timezone: usar `"2026-03-31T10:00:00Z"` (con `Z`)
+  - No testear componentes shadcn/ui ni código trivial (`utils.ts`)
+
+---
+
 ## Lo que este módulo NO incluye (por ahora)
 
 - Portal de acceso para clientes del despacho
