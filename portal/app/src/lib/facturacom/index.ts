@@ -42,6 +42,12 @@ export {
 } from "./sync-productos";
 
 export {
+  saveCfdiFiles,
+  type StorageResult,
+  type SaveCfdiFilesParams,
+} from "./storage";
+
+export {
   createCfdiPue,
   createCfdiPpd,
   createCfdiRep,
