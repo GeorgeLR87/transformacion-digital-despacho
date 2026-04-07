@@ -63,12 +63,16 @@ export class FacturaComApiError extends Error {
     public readonly body: FacturaComErrorBody | unknown,
     message?: string
   ) {
-    super(
-      message ??
-        (typeof (body as FacturaComErrorBody)?.message === "string"
-          ? ((body as FacturaComErrorBody).message as string)
-          : `Error HTTP ${status} en factura.com`)
-    );
+    // Extraer mensaje legible: body.message puede ser string u objeto { message: "..." }
+    const rawMsg = (body as Record<string, unknown>)?.message;
+    const extractedMsg =
+      typeof rawMsg === "string"
+        ? rawMsg
+        : typeof rawMsg === "object" && rawMsg !== null && "message" in rawMsg
+          ? String((rawMsg as Record<string, unknown>).message)
+          : null;
+
+    super(message ?? extractedMsg ?? `Error HTTP ${status} en factura.com`);
     this.name = "FacturaComApiError";
   }
 }

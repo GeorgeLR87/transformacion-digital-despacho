@@ -239,6 +239,9 @@ async function processFacturaInstruction(chatId: number, text: string): Promise<
   const metodoPago = instr.metodo_pago;
   const formaPago = metodoPago === "PPD" ? "99" : instr.forma_pago;
 
+  // Detectar si es CFDI Global (publico en general)
+  const esCfdiGlobal = receptor.rfc === "XAXX010101000";
+
   const cfdiPayload: Record<string, unknown> = {
     Receptor: { UID: receptor.uid_facturacom },
     TipoDocumento: "factura",
@@ -246,9 +249,17 @@ async function processFacturaInstruction(chatId: number, text: string): Promise<
     UsoCFDI: usoCfdi,
     Serie: serie.uid_facturacom,
     FormaPago: formaPago,
-    MetodoPago: metodoPago,
+    MetodoPago: esCfdiGlobal ? "PUE" : metodoPago, // CFDI Global siempre es PUE
     Moneda: "MXN",
     EnviarCorreo: false,
+    // CFDI Global requiere InformacionGlobal (regla SAT CFDI40130)
+    ...(esCfdiGlobal ? {
+      InformacionGlobal: {
+        Periodicidad: "04", // Mensual
+        Meses: String(new Date().getMonth() + 1).padStart(2, "0"),
+        "Año": new Date().getFullYear(),
+      },
+    } : {}),
   };
 
   // 9. Crear BORRADOR en factura.com (NO timbra)
