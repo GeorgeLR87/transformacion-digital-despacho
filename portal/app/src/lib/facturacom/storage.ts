@@ -95,27 +95,20 @@ export async function saveCfdiFiles(params: SaveCfdiFilesParams): Promise<Storag
 
   // Descargar y subir XML
   try {
-    const xmlResponse = await facturaClient.downloadCfdiXml(uid_facturacom);
-    const xmlBase64 = (xmlResponse as Record<string, string>).data;
+    const xmlBuffer = await facturaClient.downloadCfdiXml(uid_facturacom);
+    const xmlStoragePath = `${basePath}.xml`;
 
-    if (xmlBase64) {
-      const xmlBuffer = Buffer.from(xmlBase64, "base64");
-      const xmlStoragePath = `${basePath}.xml`;
+    const { error: uploadError } = await supabase.storage
+      .from("facturas")
+      .upload(xmlStoragePath, xmlBuffer, {
+        contentType: "application/xml",
+        upsert: true,
+      });
 
-      const { error: uploadError } = await supabase.storage
-        .from("facturas")
-        .upload(xmlStoragePath, xmlBuffer, {
-          contentType: "application/xml",
-          upsert: true,
-        });
-
-      if (uploadError) {
-        errores.push(`Error al subir XML: ${uploadError.message}`);
-      } else {
-        xmlPath = xmlStoragePath;
-      }
+    if (uploadError) {
+      errores.push(`Error al subir XML: ${uploadError.message}`);
     } else {
-      errores.push("factura.com no devolvió datos XML");
+      xmlPath = xmlStoragePath;
     }
   } catch (err) {
     errores.push(`Error al descargar XML: ${err instanceof Error ? err.message : "desconocido"}`);
@@ -123,27 +116,20 @@ export async function saveCfdiFiles(params: SaveCfdiFilesParams): Promise<Storag
 
   // Descargar y subir PDF
   try {
-    const pdfResponse = await facturaClient.downloadCfdiPdf(uid_facturacom);
-    const pdfBase64 = (pdfResponse as Record<string, string>).data;
+    const pdfBuffer = await facturaClient.downloadCfdiPdf(uid_facturacom);
+    const pdfStoragePath = `${basePath}.pdf`;
 
-    if (pdfBase64) {
-      const pdfBuffer = Buffer.from(pdfBase64, "base64");
-      const pdfStoragePath = `${basePath}.pdf`;
+    const { error: uploadError } = await supabase.storage
+      .from("facturas")
+      .upload(pdfStoragePath, pdfBuffer, {
+        contentType: "application/pdf",
+        upsert: true,
+      });
 
-      const { error: uploadError } = await supabase.storage
-        .from("facturas")
-        .upload(pdfStoragePath, pdfBuffer, {
-          contentType: "application/pdf",
-          upsert: true,
-        });
-
-      if (uploadError) {
-        errores.push(`Error al subir PDF: ${uploadError.message}`);
-      } else {
-        pdfPath = pdfStoragePath;
-      }
+    if (uploadError) {
+      errores.push(`Error al subir PDF: ${uploadError.message}`);
     } else {
-      errores.push("factura.com no devolvió datos PDF");
+      pdfPath = pdfStoragePath;
     }
   } catch (err) {
     errores.push(`Error al descargar PDF: ${err instanceof Error ? err.message : "desconocido"}`);

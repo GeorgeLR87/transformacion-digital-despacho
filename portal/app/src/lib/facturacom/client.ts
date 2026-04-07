@@ -311,18 +311,85 @@ export class FacturaComClient {
   }
 
   /**
-   * Descarga el PDF de un CFDI.
-   * Retorna la URL de descarga o el contenido base64 según la respuesta de factura.com.
+   * Descarga un archivo (PDF o XML) como Buffer.
+   * factura.com puede devolver el archivo directamente como binario
+   * o como JSON con campo "data" en base64.
    */
-  async downloadCfdiPdf(uid: string): Promise<Record<string, unknown>> {
-    return this.request<Record<string, unknown>>("GET", `/v4/cfdi40/${uid}/pdf`);
+  private async downloadFile(path: string): Promise<Buffer> {
+    const url = `${this.host}${path}`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: this.buildHeaders(),
+    });
+
+    if (!res.ok) {
+      throw new FacturaComApiError(res.status, null, `Error al descargar archivo (HTTP ${res.status})`);
+    }
+
+    const contentType = res.headers.get("content-type") ?? "";
+
+    // Si la respuesta es binaria (PDF/XML directo)
+    if (contentType.includes("application/pdf") || contentType.includes("application/xml") || contentType.includes("text/xml")) {
+      const arrayBuffer = await res.arrayBuffer();
+      return Buffer.from(arrayBuffer);
+    }
+
+    // Si la respuesta es JSON con base64
+    const json = await res.json() as Record<string, string>;
+    if (json.data) {
+      return Buffer.from(json.data, "base64");
+    }
+
+    throw new FacturaComApiError(res.status, null, "Formato de respuesta de descarga no reconocido");
   }
 
   /**
-   * Descarga el XML de un CFDI.
+   * Descarga el PDF de un CFDI (timbrado o borrador) como Buffer.
    */
-  async downloadCfdiXml(uid: string): Promise<Record<string, unknown>> {
-    return this.request<Record<string, unknown>>("GET", `/v4/cfdi40/${uid}/xml`);
+  async downloadCfdiPdf(uid: string): Promise<Buffer> {
+    return this.downloadFile(`/v4/cfdi40/${uid}/pdf`);
+  }
+
+  /**
+   * Descarga el XML de un CFDI como Buffer.
+   */
+  async downloadCfdiXml(uid: string): Promise<Buffer> {
+    return this.downloadFile(`/v4/cfdi40/${uid}/xml`);
+  }
+
+  // -------------------------------------------------------------------------
+  // Borradores — Draft + timbrar + eliminar
+  // -------------------------------------------------------------------------
+
+  /**
+   * Crea un borrador de CFDI sin timbrarlo.
+   * Usa el mismo payload de createCfdi pero agrega "Draft": "1".
+   * El borrador queda guardado en factura.com con un UID y folio reservado.
+   * Endpoint: POST /v4/cfdi40/create con Draft=1
+   */
+  async createDraft(payload: Record<string, unknown>): Promise<CfdiCreateResponse> {
+    return this.request<CfdiCreateResponse>("POST", "/v4/cfdi40/create", {
+      ...payload,
+      Draft: "1",
+    });
+  }
+
+  /**
+   * Timbra un borrador existente. Usa el mismo folio que el borrador.
+   * Endpoint: POST /v4/cfdi40/{uid}/timbrarborrador
+   */
+  async timbrarBorrador(uid: string): Promise<CfdiCreateResponse> {
+    return this.request<CfdiCreateResponse>("POST", `/v4/cfdi40/${uid}/timbrarborrador`);
+  }
+
+  /**
+   * Elimina un borrador.
+   * Endpoint: POST /v4/cfdi40/{uid}/cancel (misma ruta que cancelar, funciona para borradores)
+   */
+  async eliminarBorrador(uid: string): Promise<Record<string, unknown>> {
+    return this.request<Record<string, unknown>>("POST", `/v4/cfdi40/${uid}/cancel`, {
+      motivo: "02",
+    });
   }
 
   // -------------------------------------------------------------------------

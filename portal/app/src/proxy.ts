@@ -36,7 +36,8 @@ export async function proxy(request: NextRequest) {
   const isPublicRoute =
     pathname.startsWith('/login') ||
     pathname.startsWith('/register') ||
-    pathname.startsWith('/auth')
+    pathname.startsWith('/auth') ||
+    pathname.startsWith('/api/webhook')
 
   // Redirigir a login si no está autenticado y la ruta es protegida
   if (!user && !isPublicRoute) {
