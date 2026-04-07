@@ -109,7 +109,7 @@ export async function syncClientesFacturaCom(
   const BATCH_SIZE = 50;
   for (let i = 0; i < clientes.length; i += BATCH_SIZE) {
     const batch = clientes.slice(i, i + BATCH_SIZE);
-    const batchResult = await upsertReceptoresBatch(supabase, batch);
+    const batchResult = await upsertReceptoresBatch(supabase, empresaId, batch);
 
     result.insertados += batchResult.insertados;
     result.actualizados += batchResult.actualizados;
@@ -164,6 +164,7 @@ async function fetchAllClientes(
 
 /** Campos requeridos para insertar en billing_receptores */
 interface BillingReceptorInsert {
+  empresa_id: string;
   rfc: string;
   razon_social: string;
   email: string;
@@ -185,11 +186,12 @@ interface BatchResult {
 }
 
 /**
- * billing_receptores es un catálogo global (UNIQUE por RFC).
- * No existe empresa_id en la tabla — un receptor puede facturar con múltiples emisores.
+ * billing_receptores es per-empresa (UNIQUE por empresa_id + RFC).
+ * Cada empresa tiene su propia lista de receptores con UIDs independientes.
  */
 async function upsertReceptoresBatch(
   supabase: ReturnType<typeof getSupabaseAdmin>,
+  empresaId: string,
   clientes: FacturaComCliente[]
 ): Promise<BatchResult> {
   const result: BatchResult = {
@@ -199,11 +201,12 @@ async function upsertReceptoresBatch(
     detallesError: [],
   };
 
-  // Obtener receptores existentes por RFC en una sola query
+  // Obtener receptores existentes de ESTA empresa por RFC
   const rfcs = clientes.map((c) => c.RFC);
   const { data: existentes, error: fetchError } = await supabase
     .from("billing_receptores")
     .select("id, rfc, uid_facturacom")
+    .eq("empresa_id", empresaId)
     .in("rfc", rfcs);
 
   if (fetchError) {
@@ -223,8 +226,8 @@ async function upsertReceptoresBatch(
     const existente = existentesMap.get(cliente.RFC);
 
     if (!existente) {
-      // Nuevo receptor
-      toInsert.push(mapClienteToReceptor(cliente));
+      // Nuevo receptor para esta empresa
+      toInsert.push(mapClienteToReceptor(empresaId, cliente));
     } else if (existente.uid_facturacom !== cliente.UID) {
       // UID cambió (raro pero posible tras migración de cuenta)
       toUpdate.push({ id: existente.id, uid_facturacom: cliente.UID });
@@ -274,11 +277,12 @@ async function upsertReceptoresBatch(
 
 /**
  * Mapea un cliente de factura.com a los campos de billing_receptores.
- * Solo incluye columnas que existen en la tabla (v2 schema).
+ * Incluye empresa_id para vincular el receptor con su empresa emisora.
  * Campos de dirección (calle, colonia, etc.) no están en el schema — se omiten.
  */
-function mapClienteToReceptor(cliente: FacturaComCliente): BillingReceptorInsert {
+function mapClienteToReceptor(empresaId: string, cliente: FacturaComCliente): BillingReceptorInsert {
   return {
+    empresa_id: empresaId,
     uid_facturacom: cliente.UID,       // TEXT hex, ej: "69c2b39872b03"
     rfc: cliente.RFC,
     razon_social: cliente.RazonSocial,
@@ -295,25 +299,28 @@ function mapClienteToReceptor(cliente: FacturaComCliente): BillingReceptorInsert
 // ---------------------------------------------------------------------------
 
 /**
- * Busca el UID interno de factura.com para un RFC.
- * Primero consulta billing_receptores (caché local, único por RFC).
+ * Busca el UID interno de factura.com para un RFC dentro de una empresa.
+ * Primero consulta billing_receptores (per empresa).
  * Si no existe, busca en factura.com, lo inserta y retorna el UID.
  *
  * Lanza error si el RFC no existe en factura.com.
  *
  * @param supabase - Cliente Supabase (admin para escritura)
  * @param facturaClient - Cliente de factura.com de la empresa emisora
+ * @param empresaId - ID de la empresa emisora en billing_empresas_emisoras
  * @param rfc - RFC del receptor a buscar
  */
 export async function resolveReceptorUid(
   supabase: ReturnType<typeof getSupabaseAdmin>,
   facturaClient: ReturnType<typeof createFacturaComClient>,
+  empresaId: string,
   rfc: string
 ): Promise<string> {
-  // 1. Buscar en caché local — billing_receptores es global (UNIQUE por RFC)
+  // 1. Buscar en billing_receptores de ESTA empresa
   const { data: local } = await supabase
     .from("billing_receptores")
     .select("uid_facturacom")
+    .eq("empresa_id", empresaId)
     .eq("rfc", rfc)
     .single();
 
@@ -329,10 +336,10 @@ export async function resolveReceptorUid(
     );
   }
 
-  // 3. Insertar en Supabase para próximas consultas
+  // 3. Insertar en Supabase para esta empresa
   await supabase
     .from("billing_receptores")
-    .insert(mapClienteToReceptor(clienteRemoto));
+    .insert(mapClienteToReceptor(empresaId, clienteRemoto));
 
   return clienteRemoto.UID;
 }

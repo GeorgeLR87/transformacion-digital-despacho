@@ -1,7 +1,7 @@
 /**
  * GET /api/receptores
  * Lista receptores con filtros opcionales.
- * Query params: ?rfc=, ?q= (busca en razón social), ?activo=true, ?limit=50, ?offset=0
+ * Query params: ?empresa_id= (requerido), ?rfc=, ?q= (busca en razon social), ?activo=true, ?limit=50, ?offset=0
  */
 import type { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
@@ -12,17 +12,23 @@ export async function GET(req: NextRequest) {
   if (!user) return apiError("No autenticado", 401);
 
   const sp = req.nextUrl.searchParams;
+  const empresaId = sp.get("empresa_id");
   const rfc = sp.get("rfc");
   const q = sp.get("q");
   const soloActivos = sp.get("activo") !== "false";
   const limit = Math.min(Number(sp.get("limit")) || 50, 200);
   const offset = Number(sp.get("offset")) || 0;
 
+  if (!empresaId) {
+    return apiError("empresa_id es requerido", 400, "MISSING_EMPRESA_ID");
+  }
+
   const supabase = await createClient();
 
   let query = supabase
     .from("billing_receptores")
-    .select("id, rfc, razon_social, email, regimen_fiscal, cp_fiscal, uso_cfdi, uid_facturacom, activo", { count: "exact" })
+    .select("id, empresa_id, rfc, razon_social, email, regimen_fiscal, cp_fiscal, uso_cfdi, uid_facturacom, activo", { count: "exact" })
+    .eq("empresa_id", empresaId)
     .order("razon_social")
     .range(offset, offset + limit - 1);
 
